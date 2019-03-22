@@ -1,0 +1,28 @@
+h1 {
+	text-align: center;
+}
+
+.chessBoard > table {
+	margin: auto;
+	min-width: 405px;
+	background-size: cover;
+	border: 1px solid #282923;
+	background-repeat: no-repeat;
+	background-image: url("../img/background.svg");
+}
+
+.chessBoard > table > tr > td {
+	width: 45px;
+	height: 45px;
+}
+
+.chessBoard > table > tr > td > img {
+	width: 44px;
+	height: 44px;
+	vertical-align: top;
+	border-radius: 50%;
+}
+
+.chessBoard > table > tr > td > img:hover {
+	box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.5);
+}
