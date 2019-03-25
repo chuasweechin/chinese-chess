@@ -44,7 +44,7 @@ var placeChessPiecesAtStartingPosition = function (player) {
         let imgElement = document.createElement("img");
 
         imgElement.setAttribute("id", chessPiece.id);
-        imgElement.setAttribute("name", chessPiece.name);
+        imgElement.setAttribute("displayName", chessPiece.displayName);
         imgElement.setAttribute("src", chessPiece.image);
         imgElement.setAttribute("color", chessPiece.color);
 
@@ -55,6 +55,14 @@ var placeChessPiecesAtStartingPosition = function (player) {
         // place the chess pieces into the back end
         playerChessBoard[chessPiece.yCoordinate][chessPiece.xCoordinate] = chessPiece;
     });
+}
+
+// check if player win by checking if the enemy general is killed
+var disableChessBoard = function () {
+    document.querySelectorAll('.chessBoard > table > tr > td > img').forEach (function (element) {
+        element.className += "disableChessPiece";
+    });
+    removeEventFromChessPieces();
 }
 
 var movePlayerChessPiece = function (cellElement) {
@@ -116,11 +124,6 @@ var killEnemyChessPieceUpdateBackEnd = function (player, chessPieceToBeKilled) {
     });
 }
 
-// check if player win by checking if the enemy general is killed
-var checkForWin = function () {
-    console.log("win");
-}
-
 // add chess piece click event for all the chess pieces
 var addEventFromChessPieces = function () {
     document.querySelectorAll("table > tr > td > img").forEach(function (chessPieceElement) {
@@ -138,7 +141,7 @@ var removeEventFromChessPieces = function () {
 var addEventFromCells = function () {
     document.querySelectorAll("table > tr > td").forEach(function (cellElement) {
         if (selectedChessPieceElement.parentElement !== cellElement) {
-            cellElement.style.backgroundColor = "rgb(242, 238, 205, 0.4)";
+            cellElement.style.backgroundColor = "rgb(242, 238, 205, 0.5)";
             cellElement.addEventListener("click", cellClickEvent);
         }
     });
@@ -181,23 +184,46 @@ var cellClickEvent = function (event) {
     if (this.childNodes.length > 0) {
         let cellChessPieceColor = this.childNodes[0].getAttribute("color");
 
+        // disable friendly fire
         if (selectedChessPieceColor === cellChessPieceColor) {
-            alert("You cannot attack your own " + this.childNodes[0].getAttribute("name") + "!");
+            alert("You cannot attack your own " + this.childNodes[0].getAttribute("displayName") + "!");
         } else {
             movePlayerChessPiece(this);
             killEnemyChessPiece(this);
+
+            // check if player enemy general has been killed
+            if (selectedChessPieceColor === "red") {
+                checkForWin(redPlayer, bluePlayer);
+            } else {
+                checkForWin(bluePlayer, redPlayer);
+            }
         }
     } else {
         movePlayerChessPiece(this);
     }
+}
 
-    checkForWin();
+// check if player win by checking if the enemy general is killed
+var checkForWin = function (attackingPlayer, defendingPlayer) {
+    defendingPlayer.chessPieces.forEach (function (chessPiece) {
+        if (chessPiece.name === "general" && chessPiece.killed === true) {
+            disableChessBoard();
+
+            setTimeout(function () {
+                alert("You have defeated your enemy " + chessPiece.displayName + "!\n\n"
+                    + attackingPlayer.name + ", you have won the game!");
+            }, 250);
+
+            setGameMessage("You have defeated your enemy " + chessPiece.displayName + "!\n\n"
+                    + attackingPlayer.name + ", you have won the game!");
+
+        }
+    });
 }
 
 // set game message for the player
 var setGameMessage = function (message) {
-    document.querySelector(".gameMessage").textContent =
-        "Round " + gameRound + ": " + message;
+    document.querySelector(".gameMessage").innerHTML = message;
 }
 
 // main
@@ -209,10 +235,9 @@ placeChessPiecesAtStartingPosition(bluePlayer);
 
 // outstanding task
 // 1 .set the turn for players. disable the enemy chess piece when it is the player's turn
-// 2. create method to see if player win. Do this by checking if the enemy general is killed
-// 3. create movement pattern for each of the chess piece
+// 2. create movement pattern for each of the chess piece
 //    - flying general
 //    - upgrade soldier movement
-// 4. create a score board for players
-// 5. improve UI to allow player to know each other turn
-// 6. implement a computer player
+// 3. create a score board for players
+// 4. improve UI to allow player to know each other turn
+// 5. implement a computer player
