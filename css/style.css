@@ -1,10 +1,11 @@
-h1 {
+body {
 	text-align: center;
 }
 
 .chessBoard > table {
 	margin: auto;
 	min-width: 405px;
+	border-spacing: 3px;
 	background-size: cover;
 	border: 1px solid #282923;
 	background-repeat: no-repeat;
@@ -23,6 +24,14 @@ h1 {
 	border-radius: 50%;
 }
 
-.chessBoard > table > tr > td > img:hover {
+.chessBoard > table > tr > td > img:active {
+	box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.5);
+}
+
+.gameMessage {
+	font-size: 16px;
+}
+
+.selected {
 	box-shadow: 0 0 5px 5px rgba(255, 255, 255, 0.5);
 }
