@@ -9,18 +9,31 @@ var generatePossibleMoveBasedOnMovePattern = function () {
         let xCoordinatePattern = pattern[1];
 
         for (let d = 1; d <= chessPieceMoveDistance; d++) {
+            let computedYCoordinate = chessPieceYCoordinate + yCoordinatePattern * d;
+            let computedXCoordinate = chessPieceXCoordinate + xCoordinatePattern * d;
+
             // check for upper bound for the board
-            if ((chessPieceYCoordinate + yCoordinatePattern * d) < yAxisUpperBoundary) {
-                if ((chessPieceXCoordinate + xCoordinatePattern * d) < xAxisUpperBoundary) {
+            if (computedYCoordinate < yAxisUpperBoundary) {
+                if (computedXCoordinate < xAxisUpperBoundary) {
 
                     // check for lower bound for the board
-                    if ((chessPieceYCoordinate + yCoordinatePattern * d)  >= yxAxisLowerBoundary) {
-                        if ((chessPieceXCoordinate + xCoordinatePattern * d)  >= yxAxisLowerBoundary) {
+                    if (computedYCoordinate >= yxAxisLowerBoundary) {
+                        if (computedXCoordinate >= yxAxisLowerBoundary) {
 
-                            possibleMoves.push({
-                                possibleYCoordinate: chessPieceYCoordinate + yCoordinatePattern * d,
-                                possibleXCoordinate: chessPieceXCoordinate + xCoordinatePattern * d
-                            });
+                            // check for collision with other pieces
+                            if (playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                                possibleMoves.push({
+                                    possibleYCoordinate: computedYCoordinate,
+                                    possibleXCoordinate: computedXCoordinate
+                                });
+                            } else {
+                                possibleMoves.push({
+                                    possibleYCoordinate: computedYCoordinate,
+                                    possibleXCoordinate: computedXCoordinate
+                                });
+
+                                break;
+                            }
                         }
                     }
                 }

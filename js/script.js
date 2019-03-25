@@ -110,11 +110,6 @@ var endPlayerTurn = function () {
     }
 }
 
-// check if player win by checking if the enemy general is killed
-var disableChessBoard = function () {
-    removeEventFromChessPieces();
-}
-
 var movePlayerChessPiece = function (cellElement) {
     selectedChessPieceElement.classList.remove("selected");
     selectedChessPieceElement.removeEventListener("click", chessPieceDeselectEvent);
@@ -253,19 +248,22 @@ var cellClickEvent = function (event) {
             } else {
                 checkForWin(bluePlayer, redPlayer);
             }
+
+            endPlayerTurn();
         }
     } else {
         movePlayerChessPiece(this);
+        endPlayerTurn();
     }
-
-    endPlayerTurn();
 }
 
 // check if player win by checking if the enemy general is killed
 var checkForWin = function (attackingPlayer, defendingPlayer) {
     defendingPlayer.chessPieces.forEach (function (chessPiece) {
         if (chessPiece.name === "general" && chessPiece.killed === true) {
-            disableChessBoard();
+
+            // disable the chess board since a player has been determined
+            removeEventFromChessPieces();
 
             setTimeout(function () {
                 alert("You have defeated your enemy " + chessPiece.displayName + "!\n\n"
@@ -287,9 +285,6 @@ var setGameMessage = function (message) {
 generateGame();
 
 // outstanding task
-// 1. create movement pattern for each of the chess piece
-// - flying general
-// - upgrade soldier movement
+// 1. create a score board for players
 // 2. track what pieces are dead for the player
 // 3. improve UI to allow player to know each other turn
-// 4. create a score board for players
