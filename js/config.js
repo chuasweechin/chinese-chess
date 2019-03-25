@@ -1,5 +1,7 @@
 var generatePossibleMoveBasedOnMovePattern = function () {
     let possibleMoves = [];
+
+    let chessPieceName = this.name;
     let chessPieceYCoordinate = this.yCoordinate;
     let chessPieceXCoordinate = this.xCoordinate;
     let chessPieceMoveDistance = this.moveDistance;
@@ -7,41 +9,70 @@ var generatePossibleMoveBasedOnMovePattern = function () {
     this.movePattern.forEach(function(pattern) {
         let yCoordinatePattern = pattern[0];
         let xCoordinatePattern = pattern[1];
+        let somethingInBetweenCannon = false;
 
         for (let d = 1; d <= chessPieceMoveDistance; d++) {
             let computedYCoordinate = chessPieceYCoordinate + yCoordinatePattern * d;
             let computedXCoordinate = chessPieceXCoordinate + xCoordinatePattern * d;
 
-            // check for upper bound for the board
-            if (computedYCoordinate < yAxisUpperBoundary) {
-                if (computedXCoordinate < xAxisUpperBoundary) {
+            if (chessPieceName === "general" || chessPieceName === "advisor" || chessPieceName === "elephant" || chessPieceName === "chariot" || chessPieceName === "soldier") {
 
-                    // check for lower bound for the board
-                    if (computedYCoordinate >= yxAxisLowerBoundary) {
-                        if (computedXCoordinate >= yxAxisLowerBoundary) {
+                if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
+                    // check for collision with other chess pieces
+                    possibleMoves.push({
+                        possibleYCoordinate: computedYCoordinate,
+                        possibleXCoordinate: computedXCoordinate
+                    });
 
-                            // check for collision with other pieces
-                            if (playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
-                                possibleMoves.push({
-                                    possibleYCoordinate: computedYCoordinate,
-                                    possibleXCoordinate: computedXCoordinate
-                                });
-                            } else {
-                                possibleMoves.push({
-                                    possibleYCoordinate: computedYCoordinate,
-                                    possibleXCoordinate: computedXCoordinate
-                                });
-
-                                break;
-                            }
-                        }
+                    // break the loop if a collision is detected
+                    if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                        break;
                     }
+                }
+            } else if (chessPieceName === "cannon") {
+                if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
+                    possibleMoves.push({
+                        possibleYCoordinate: computedYCoordinate,
+                        possibleXCoordinate: computedXCoordinate
+                    });
+
+                    if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                        && somethingInBetweenCannon === false) {
+                        // remove the in between chess piece as this cannot be attacked
+                        possibleMoves.pop();
+                        somethingInBetweenCannon = true;
+
+                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] === ""
+                        && somethingInBetweenCannon === true) {
+                        //remove the empty spaces from the move zone as this is not allowed
+                        possibleMoves.pop();
+
+                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                        && somethingInBetweenCannon === true) {
+                        break;
+                    }
+                }
+            } else if (chessPieceName === "horse") {
+                if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
+
                 }
             }
         }
     });
 
     return possibleMoves;
+}
+
+var chessBoardUpperAndLowerBoundaryCheck = function (computedYCoordinate, computedXCoordinate) {
+    // return true if the coordinates are within the chess board boundary
+    if (computedYCoordinate < yAxisUpperBoundary &&
+            computedXCoordinate < xAxisUpperBoundary &&
+                computedYCoordinate >= yxAxisLowerBoundary &&
+                    computedXCoordinate >= yxAxisLowerBoundary) {
+        return true;
+    }
+
+    return false;
 }
 
 let yxAxisLowerBoundary = 0;

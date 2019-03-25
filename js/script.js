@@ -266,12 +266,10 @@ var checkForWin = function (attackingPlayer, defendingPlayer) {
             removeEventFromChessPieces();
 
             setTimeout(function () {
-                alert("You have defeated your enemy " + chessPiece.displayName + "!\n\n"
-                    + attackingPlayer.name + ", you have won the game!");
+                alert(attackingPlayer.name + ", you have won the game!");
             }, 250);
 
-            setGameMessage("You have defeated your enemy " + chessPiece.displayName + "!\n\n"
-                    + attackingPlayer.name + ", you have won the game!");
+            setGameMessage(attackingPlayer.name + ", you have won the game!");
 
         }
     });
