@@ -57,7 +57,7 @@ var placeChessPiecesAtStartingPosition = function (player) {
     });
 }
 
-var gameSetup = function () {
+var generateGame = function () {
     playerChessBoard = createChessBoardBackEnd();
     renderChessBoardUI(playerChessBoard);
 
@@ -69,7 +69,7 @@ var gameSetup = function () {
         chessPieceElement.removeEventListener("click", chessPieceClickEvent);
     });
 
-    setGameMessage("It is now Red's turn.");
+    setGameMessage("It is now Red's turn");
 }
 
 // determine whose turn is it and disable the enemy chess pieces
@@ -89,7 +89,7 @@ var endPlayerTurn = function () {
 
         bluePlayer.turn = true;
 
-        setGameMessage("It is now Blue's turn.");
+        setGameMessage("It is now Blue's turn");
 
     } else if (bluePlayer.turn === true) {
        // disable blue chess pieces once blue turn is over
@@ -106,7 +106,7 @@ var endPlayerTurn = function () {
 
         redPlayer.turn = true;
 
-        setGameMessage("It is now Red's turn.");
+        setGameMessage("It is now Red's turn");
     }
 }
 
@@ -147,8 +147,8 @@ var movePlayerChessPieceUpdateBackEnd = function (player, cellElement) {
             playerChessBoard[chessPiece.yCoordinate][chessPiece.xCoordinate] = "";
 
             // update the chess piece coordinate data
-            chessPiece.yCoordinate = elementYCoordinate;
-            chessPiece.xCoordinate = elementXCoordinate;
+            chessPiece.yCoordinate = Number(elementYCoordinate);
+            chessPiece.xCoordinate = Number(elementXCoordinate);
 
             playerChessBoard[elementYCoordinate][elementXCoordinate] = chessPiece;
         }
@@ -189,13 +189,17 @@ var removeEventFromChessPieces = function () {
     });
 }
 
-// add cell click event for applicable cells
+// add cell click event based on the possible movement by chess piece
 var addEventForCells = function () {
-    document.querySelectorAll("table > tr > td").forEach(function (cellElement) {
-        if (selectedChessPieceElement.parentElement !== cellElement) {
-            cellElement.style.backgroundColor = "rgb(242, 238, 205, 0.5)";
-            cellElement.addEventListener("click", cellClickEvent);
-        }
+    let yAxis = selectedChessPieceElement.parentElement.getAttribute("yCoordinate");
+    let xAxis = selectedChessPieceElement.parentElement.getAttribute("xCoordinate");
+
+    // get chess piece object from back end
+    playerChessBoard[yAxis][xAxis].possibleMoves().forEach(function(move) {
+        let cellElement = document.querySelector('[yCoordinate="' + move.possibleYCoordinate + '"][xCoordinate="' + move.possibleXCoordinate + '"]');
+
+        cellElement.style.backgroundColor = "rgb(242, 238, 205, 0.5)";
+        cellElement.addEventListener("click", cellClickEvent);
     });
 }
 
@@ -280,16 +284,12 @@ var setGameMessage = function (message) {
     document.querySelector(".gameMessage").innerHTML = message;
 }
 
-gameSetup();
-
+generateGame();
 
 // outstanding task
-// 1 .set the turn for players. disable the enemy chess piece when it is the player's turn
-    // start of the game
-    // place after end turn placing cell
-// 2. create movement pattern for each of the chess piece
-//    - flying general
-//    - upgrade soldier movement - left and right
-// 3. create a score board for players
-// 4. improve UI to allow player to know each other turn
-// 5. implement a computer player
+// 1. create movement pattern for each of the chess piece
+// - flying general
+// - upgrade soldier movement
+// 2. track what pieces are dead for the player
+// 3. improve UI to allow player to know each other turn
+// 4. create a score board for players
