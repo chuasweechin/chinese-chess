@@ -193,7 +193,7 @@ var addEventForCells = function () {
     playerChessBoard[yAxis][xAxis].possibleMoves().forEach(function(move) {
         let cellElement = document.querySelector('[yCoordinate="' + move.possibleYCoordinate + '"][xCoordinate="' + move.possibleXCoordinate + '"]');
 
-        cellElement.style.backgroundColor = "rgb(242, 238, 205, 0.5)";
+        cellElement.style.backgroundColor = "rgb(140, 140, 138, 0.6)";
         cellElement.addEventListener("click", cellClickEvent);
     });
 }

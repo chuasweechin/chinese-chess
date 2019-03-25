@@ -2,9 +2,9 @@
 <svg width="100" height="100" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
 <title>&#28846;</title>
 <circle id="cir_1" r="50" cx="50" cy="50" fill="#eb5"/>
-<circle id="cir_2" r="45" cx="50" cy="50" stroke-width="2" stroke="#f00" fill="#eb5"/>
+<circle id="cir_2" r="45" cx="50" cy="50" stroke-width="2" stroke="#C71C22" fill="#eb5"/>
 <svg x="15" y="15" viewBox="0 0 250 250" width="70px" height="70px">
-<g transform="scale(0.1,-0.1)" fill="#f00">
+<g transform="scale(0.1,-0.1)" fill="#C71C22">
 <path d="M562 -300 c-17 -17 -15 -49 7 -99 25 -59 41 -232 41 -455 0 -375
 -53 -671 -156 -877 -47 -92 -80 -140 -177 -255 -77 -91 -87 -115 -53 -128 32
 -12 189 90 272 177 67 72 117 149 159 245 19 43 38 77 42 75 5 -3 36 -41 69

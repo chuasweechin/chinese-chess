@@ -53,6 +53,8 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                     }
                 }
             } else if (chessPieceName === "horse") {
+                let movementBlock = [[-1,0], [0,1], [1,0], [0,-1]];
+
                 if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
 
                 }
