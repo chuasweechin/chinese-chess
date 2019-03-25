@@ -57,11 +57,61 @@ var placeChessPiecesAtStartingPosition = function (player) {
     });
 }
 
+var gameSetup = function () {
+    playerChessBoard = createChessBoardBackEnd();
+    renderChessBoardUI(playerChessBoard);
+
+    placeChessPiecesAtStartingPosition(redPlayer);
+    placeChessPiecesAtStartingPosition(bluePlayer);
+
+    // disable blue chess piece because red always start first
+    document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
+        chessPieceElement.removeEventListener("click", chessPieceClickEvent);
+    });
+
+    setGameMessage("It is now Red's turn.");
+}
+
+// determine whose turn is it and disable the enemy chess pieces
+var endPlayerTurn = function () {
+    if (redPlayer.turn === true) {
+        // disable red chess pieces once red turn is over
+        document.querySelectorAll('tr > td > img[color="red"]').forEach(function(chessPieceElement) {
+            chessPieceElement.removeEventListener("click", chessPieceClickEvent);
+        });
+
+        redPlayer.turn = false;
+
+        // enable blue chess pieces once his turn is over
+        document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
+            chessPieceElement.addEventListener("click", chessPieceClickEvent);
+        });
+
+        bluePlayer.turn = true;
+
+        setGameMessage("It is now Blue's turn.");
+
+    } else if (bluePlayer.turn === true) {
+       // disable blue chess pieces once blue turn is over
+        document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
+            chessPieceElement.removeEventListener("click", chessPieceClickEvent);
+        });
+
+        bluePlayer.turn = false;
+
+        // enable red chess pieces once his turn is over
+        document.querySelectorAll('tr > td > img[color="red"]').forEach(function(chessPieceElement) {
+            chessPieceElement.addEventListener("click", chessPieceClickEvent);
+        });
+
+        redPlayer.turn = true;
+
+        setGameMessage("It is now Red's turn.");
+    }
+}
+
 // check if player win by checking if the enemy general is killed
 var disableChessBoard = function () {
-    document.querySelectorAll('.chessBoard > table > tr > td > img').forEach (function (element) {
-        element.className += "disableChessPiece";
-    });
     removeEventFromChessPieces();
 }
 
@@ -79,7 +129,7 @@ var movePlayerChessPiece = function (cellElement) {
     // move selected chess piece to this cell
     cellElement.appendChild(selectedChessPieceElement);
 
-    addEventFromChessPieces();
+    //addEventForChessPieces(this);
     removeEventFromCells();
 
     selectedChessPieceElement = null;
@@ -125,8 +175,10 @@ var killEnemyChessPieceUpdateBackEnd = function (player, chessPieceToBeKilled) {
 }
 
 // add chess piece click event for all the chess pieces
-var addEventFromChessPieces = function () {
-    document.querySelectorAll("table > tr > td > img").forEach(function (chessPieceElement) {
+var addEventForChessPieces = function (chessPieceElement) {
+    let color = chessPieceElement.getAttribute("color");
+
+    document.querySelectorAll('tr > td > img[color="' + color + '"]').forEach(function (chessPieceElement) {
         chessPieceElement.addEventListener("click", chessPieceClickEvent);
     });
 }
@@ -138,7 +190,7 @@ var removeEventFromChessPieces = function () {
 }
 
 // add cell click event for applicable cells
-var addEventFromCells = function () {
+var addEventForCells = function () {
     document.querySelectorAll("table > tr > td").forEach(function (cellElement) {
         if (selectedChessPieceElement.parentElement !== cellElement) {
             cellElement.style.backgroundColor = "rgb(242, 238, 205, 0.5)";
@@ -163,7 +215,7 @@ var chessPieceClickEvent = function (event) {
     this.addEventListener("click", chessPieceDeselectEvent);
 
     removeEventFromChessPieces();
-    addEventFromCells();
+    addEventForCells();
 }
 
 // click event for selected chess piece to allow player to deselect
@@ -171,7 +223,7 @@ var chessPieceDeselectEvent = function (event) {
     this.classList.remove("selected");
     this.removeEventListener("click", chessPieceDeselectEvent);
 
-    addEventFromChessPieces();
+    addEventForChessPieces(this);
     removeEventFromCells();
 
     selectedChessPieceElement = null;
@@ -201,6 +253,8 @@ var cellClickEvent = function (event) {
     } else {
         movePlayerChessPiece(this);
     }
+
+    endPlayerTurn();
 }
 
 // check if player win by checking if the enemy general is killed
@@ -226,18 +280,16 @@ var setGameMessage = function (message) {
     document.querySelector(".gameMessage").innerHTML = message;
 }
 
-// main
-let playerChessBoard = createChessBoardBackEnd();
+gameSetup();
 
-renderChessBoardUI(playerChessBoard);
-placeChessPiecesAtStartingPosition(redPlayer);
-placeChessPiecesAtStartingPosition(bluePlayer);
 
 // outstanding task
 // 1 .set the turn for players. disable the enemy chess piece when it is the player's turn
+    // start of the game
+    // place after end turn placing cell
 // 2. create movement pattern for each of the chess piece
 //    - flying general
-//    - upgrade soldier movement
+//    - upgrade soldier movement - left and right
 // 3. create a score board for players
 // 4. improve UI to allow player to know each other turn
 // 5. implement a computer player

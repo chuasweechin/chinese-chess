@@ -1,5 +1,6 @@
 let yAxisBoundary = 9;
 let xAxisBoundary = 8;
+let playerChessBoard = "";
 let imageFilePath = "img/";
 let selectedChessPieceElement = "";
 
@@ -180,7 +181,7 @@ let redPlayer = {
 let bluePlayer = {
     name: "Blue",
     color: "blue",
-    turn: true,
+    turn: false,
     win: 0,
     loss: 0,
     chessPieces:

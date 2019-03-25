@@ -13,13 +13,13 @@ body {
 }
 
 .chessBoard > table > tr > td {
-	width: 45px;
-	height: 45px;
+	width: 52px;
+	height: 52px;
 }
 
 .chessBoard > table > tr > td > img {
-	width: 44px;
-	height: 44px;
+	width: 51px;
+	height: 51px;
 	vertical-align: top;
 	border-radius: 50%;
 }
