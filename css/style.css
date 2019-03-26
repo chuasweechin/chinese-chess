@@ -42,6 +42,15 @@ body {
 	text-align: center;
 }
 
+.redPlayerImage, .bluePlayerImage {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	background-size: contain;
+	margin: 15px auto 0px auto;
+	background-repeat: no-repeat;
+}
+
 .redPlayerStats, .bluePlayerStats {
 	font-size: 14px;
 	margin-top: 30px;
@@ -75,27 +84,20 @@ body {
 }
 
 .redPlayerImage {
-	width: 100px;
-	height: 100px;
-	border-radius: 50%;
-	border: 1px solid black;
-	background-size: contain;
-	margin: 15px auto 0px auto;
-	background-repeat: no-repeat;
 	background-image: url("../img/red-general.svg");
 }
 
 .bluePlayerImage {
-	width: 100px;
-	height: 100px;
-	border-radius: 50%;
-	border: 1px solid black;
-	background-size: contain;
-	margin: 15px auto 0px auto;
-	background-repeat: no-repeat;
 	background-image: url("../img/blue-general.svg");
 }
 
+.redPlayer > .turn {
+	color: #CF4A3C;
+}
+
+.bluePlayer > .turn {
+	color: #005E92;
+}
 
 
 
@@ -113,12 +115,13 @@ body {
 .chessBoard > table > tr > td {
 	height: 52px;
 	min-width: 52px;
+	text-align: center;
 	border-radius: 50px;
+
 }
 
 .chessBoard > table > tr > td > img {
-	width: 50px;
-	height: 50px;
+	width: 49px;
 	vertical-align: top;
 	border-radius: 50%;
 }

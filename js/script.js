@@ -417,5 +417,7 @@ generateGame();
 
 
 
-// checkmate feature
-// show whose turn in css
+// checkmate alert and show in score board
+// flying general
+// play again button
+// timer feature
