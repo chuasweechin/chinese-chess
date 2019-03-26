@@ -1,65 +1,124 @@
 body {
-	margin: 0px;
-	text-align: center;
+	background-color: #272522;
 	font-family: 'Roboto', sans-serif;
+
 }
 
-.scoreBoard {
-	width: 50%;
-	height: 110px;
+.header > h1 {
+	margin: 10px;
+	color: #F1F1F1;
+	font-size: 60px;
+	text-align: center;
+}
+
+.container {
+	width: 72%;
+	margin: auto;
 	display: flex;
-	justify-content: space-around;
-	margin-bottom: 15px;
-	margin: 10px auto 10px auto;
+	justify-content: space-evenly;
 }
 
 .redPlayer, .bluePlayer {
-	width: 45%;
-	height: 110px;
-	font-size: 16px;
-	border-radius: 20px;
-	border: 1px solid black;
-	text-align: left;
-	padding-left: 20px;
-	vertical-align: center;
+	color: #383636;
+	font-size: 15px;
+	min-width: 200px;
+	max-width: 200px;
+	border-radius: 5px;
+	background-color: #F1F1F1;
 }
 
-.redPlayer {
-	background-color: #FF8686;
-}
-
-.bluePlayer {
-	background-color: #DDEFFD;
+.redPlayer > .title, .bluePlayer > .title {
+	font-size: 22px;
+	font-weight: bold;
+	padding: 12px 0px;
+	text-align: center;
+	border-radius: 4px;
+	background-color: #DBD9D7;
 }
 
 .redPlayer > .name, .bluePlayer > .name {
-	margin-top: 6px;
+	font-size: 18px;
+	margin-top: 10px;
+	text-align: center;
 }
 
-.redPlayer > .killed > img, .bluePlayer > .killed > img{
+.redPlayerStats, .bluePlayerStats {
+	font-size: 14px;
+	margin-top: 30px;
+	text-align: center;
+}
+
+.redPlayerStats > div , .bluePlayerStats > div {
+	margin-top: 5px;
+}
+
+.redPlayer > .turn, .bluePlayer > .turn {
+	display: none;
+	color: #383636;
+	font-size: 55px;
+	margin-top: 55px;
+	text-align: center;
+}
+
+.redPlayerStats > .killed > img, .bluePlayerStats > .killed > img {
 	width: 25px;
 	height: 25px;
+	margin-left: 2px;
 }
+
+.redPlayer > .title {
+	color: #CF4A3C;
+}
+
+.bluePlayer > .title {
+	color: #005E92;
+}
+
+.redPlayerImage {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	border: 1px solid black;
+	background-size: contain;
+	margin: 15px auto 0px auto;
+	background-repeat: no-repeat;
+	background-image: url("../img/red-general.svg");
+}
+
+.bluePlayerImage {
+	width: 100px;
+	height: 100px;
+	border-radius: 50%;
+	border: 1px solid black;
+	background-size: contain;
+	margin: 15px auto 0px auto;
+	background-repeat: no-repeat;
+	background-image: url("../img/blue-general.svg");
+}
+
+
+
+
 
 .chessBoard > table {
 	margin: auto;
 	min-width: 500px;
+	border-radius: 4px;
 	border-spacing: 3px;
 	background-size: cover;
-	border: 1px solid #282923;
 	background-repeat: no-repeat;
-	background-image: url("../img/background.svg");
+	background-image: url("../img/chessboard-background.svg");
 }
 
 .chessBoard > table > tr > td {
-	height: 50px;
-	min-width: 50px;
+	height: 52px;
+	min-width: 52px;
 	border-radius: 50px;
 }
 
 .chessBoard > table > tr > td > img {
-	width: 46px;
-	height: 46px;
+	width: 50px;
+	height: 50px;
 	vertical-align: top;
 	border-radius: 50%;
 }

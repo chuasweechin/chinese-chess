@@ -70,66 +70,44 @@ var placeChessPiecesAtStartingPosition = function (player) {
 
 var createScoreBoard = function () {
     // create score board for red
-    let redDivNameElement = document.createElement("div");
     let redDivWinStatslement = document.createElement("div");
     let redDivLoseStatslement = document.createElement("div");
     let redDivKilledLabelElement = document.createElement("div");
     let redDivKilledElement = document.createElement("div");
 
-    redDivNameElement.className = "name";
     redDivWinStatslement.className = "winStats";
     redDivLoseStatslement.className = "loseStats";
     redDivKilledLabelElement.className = "killedLabel";
     redDivKilledElement.className = "killed";
 
-    document.querySelector(".redPlayer").appendChild(redDivNameElement);
-    document.querySelector(".redPlayer").appendChild(redDivWinStatslement);
-    document.querySelector(".redPlayer").appendChild(redDivLoseStatslement);
-    document.querySelector(".redPlayer").appendChild(redDivKilledLabelElement);
-    document.querySelector(".redPlayer").appendChild(redDivKilledElement);
+    document.querySelector(".redPlayerStats").appendChild(redDivWinStatslement);
+    document.querySelector(".redPlayerStats").appendChild(redDivLoseStatslement);
+    document.querySelector(".redPlayerStats").appendChild(redDivKilledLabelElement);
+    document.querySelector(".redPlayerStats").appendChild(redDivKilledElement);
 
     // create score board for blue
-    let blueDivNameElement = document.createElement("div");
     let blueDivWinStatslement = document.createElement("div");
     let blueDivLoseStatslement = document.createElement("div");
     let blueDivKilledLabelElement = document.createElement("div");
     let blueDivKilledElement = document.createElement("div");
 
-    blueDivNameElement.className = "name";
     blueDivWinStatslement.className = "winStats";
     blueDivLoseStatslement.className = "loseStats";
     blueDivKilledLabelElement.className = "killedLabel";
     blueDivKilledElement.className = "killed";
 
-    document.querySelector(".bluePlayer").appendChild(blueDivNameElement);
-    document.querySelector(".bluePlayer").appendChild(blueDivWinStatslement);
-    document.querySelector(".bluePlayer").appendChild(blueDivLoseStatslement);
-    document.querySelector(".bluePlayer").appendChild(blueDivKilledLabelElement);
-    document.querySelector(".bluePlayer").appendChild(blueDivKilledElement);
+    document.querySelector(".bluePlayerStats").appendChild(blueDivWinStatslement);
+    document.querySelector(".bluePlayerStats").appendChild(blueDivLoseStatslement);
+    document.querySelector(".bluePlayerStats").appendChild(blueDivKilledLabelElement);
+    document.querySelector(".bluePlayerStats").appendChild(blueDivKilledElement);
 }
 
 var updateScoreBoard = function () {
-    document.querySelector(".redPlayer > .name").textContent = "Name: " + redPlayer.name;
-    document.querySelector(".redPlayer > .winStats").textContent = "Win: " + redPlayer.win;
-    document.querySelector(".redPlayer > .loseStats").textContent = " Lose: " + redPlayer.lose;
-    document.querySelector(".redPlayer > .killedLabel").textContent = "Chess Piece Killed:";
-    document.querySelector(".redPlayer > .killed").textContent = ""; //reset img for killed
-
-    redPlayer.chessPieces.filter(function(chessPiece) {
-        if (chessPiece.killed === true) {
-            return chessPiece;
-        }
-    }).forEach(function(chessPiece){
-        let img = document.createElement("img");
-        img.setAttribute("src", chessPiece.image);
-        document.querySelector(".redPlayer > .killed").appendChild(img)
-    });
-
-    document.querySelector(".bluePlayer > .name").textContent = "Name: " + bluePlayer.name;
-    document.querySelector(".bluePlayer > .winStats").textContent = "Win: " + bluePlayer.win;
-    document.querySelector(".bluePlayer > .loseStats").textContent = " Lose: " + redPlayer.lose;
-    document.querySelector(".bluePlayer > .killedLabel").textContent = "Chess Piece Killed:";
-    document.querySelector(".bluePlayer > .killed").textContent = ""; //reset img for killed
+    document.querySelector(".redPlayer > .name").innerHTML = redPlayer.name;
+    document.querySelector(".redPlayerStats > .winStats").innerHTML = "<b>Win: </b>" + redPlayer.win;
+    document.querySelector(".redPlayerStats > .loseStats").innerHTML = " <b>Lose: </b>" + redPlayer.lose;
+    document.querySelector(".redPlayerStats > .killedLabel").innerHTML = " <b>Enemy Chess Piece Killed:</b>";
+    document.querySelector(".redPlayerStats > .killed").innerHTML = ""; //reset img for killed
 
     bluePlayer.chessPieces.filter(function(chessPiece) {
         if (chessPiece.killed === true) {
@@ -138,7 +116,23 @@ var updateScoreBoard = function () {
     }).forEach(function(chessPiece){
         let img = document.createElement("img");
         img.setAttribute("src", chessPiece.image);
-        document.querySelector(".bluePlayer > .killed").appendChild(img)
+        document.querySelector(".redPlayerStats > .killed").appendChild(img)
+    });
+
+    document.querySelector(".bluePlayer > .name").innerHTML = bluePlayer.name;
+    document.querySelector(".bluePlayerStats > .winStats").innerHTML = "<b>Win: </b>" + bluePlayer.win;
+    document.querySelector(".bluePlayerStats > .loseStats").innerHTML = " <b>Lose: </b>" + bluePlayer.lose;
+    document.querySelector(".bluePlayerStats > .killedLabel").innerHTML = " <b>Enemy Chess Piece Killed:</b>";
+    document.querySelector(".bluePlayerStats > .killed").innerHTML = ""; //reset img for killed
+
+    redPlayer.chessPieces.filter(function(chessPiece) {
+        if (chessPiece.killed === true) {
+            return chessPiece;
+        }
+    }).forEach(function(chessPiece){
+        let img = document.createElement("img");
+        img.setAttribute("src", chessPiece.image);
+        document.querySelector(".bluePlayerStats > .killed").appendChild(img)
     });
 }
 
@@ -153,6 +147,8 @@ var generateGame = function () {
     document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
         chessPieceElement.removeEventListener("click", chessPieceClickEvent);
     });
+
+    document.querySelector(".redPlayer > .turn").style.display = "block";
 
     updateScoreBoard();
 }
@@ -172,6 +168,7 @@ var endPlayerTurn = function () {
 
         redPlayer.turn = false;
         removeHoverEffectForChessPieces(redPlayer.color);
+        document.querySelector(".redPlayer > .turn").style.display = "none";
 
         // enable blue chess pieces once his turn is over
         document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
@@ -180,6 +177,8 @@ var endPlayerTurn = function () {
 
         bluePlayer.turn = true;
         addHoverEffectForChessPieces(bluePlayer.color);
+        document.querySelector(".bluePlayer > .turn").style.display = "block";
+
         updateScoreBoard();
 
     } else if (bluePlayer.turn === true) {
@@ -190,6 +189,7 @@ var endPlayerTurn = function () {
 
         bluePlayer.turn = false;
         removeHoverEffectForChessPieces(bluePlayer.color);
+        document.querySelector(".bluePlayer > .turn").style.display = "none";
 
         // enable red chess pieces once his turn is over
         document.querySelectorAll('tr > td > img[color="red"]').forEach(function(chessPieceElement) {
@@ -198,6 +198,8 @@ var endPlayerTurn = function () {
 
         redPlayer.turn = true;
         addHoverEffectForChessPieces(redPlayer.color);
+        document.querySelector(".redPlayer > .turn").style.display = "block";
+
         updateScoreBoard();
     }
 }
@@ -405,9 +407,15 @@ var cellClickEvent = function (event) {
     }
 }
 
+
 /*
 ================================
 = main                         =
 ================================
 */
 generateGame();
+
+
+
+// checkmate feature
+// show whose turn in css

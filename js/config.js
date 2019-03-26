@@ -48,6 +48,10 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         }
                     }
                 } else if (chessPieceName === "elephant") {
+                    // get the coordinates that block movement for elephant
+                    let blockYCoordinate = chessPieceYCoordinate + pattern[2];
+                    let blockXCoordinate = chessPieceXCoordinate + pattern[3];
+
                     // make sure that the move is constraint within the camp
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
                         possibleMoves.push({
@@ -58,6 +62,11 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                             break;
+                        }
+
+                        // remove the possible move if block move is detected
+                        if (playerChessBoard[blockYCoordinate][blockXCoordinate] !== "") {
+                            possibleMoves.pop();
                         }
                     }
                 } else if (chessPieceName === "horse") {
@@ -263,7 +272,7 @@ let redPlayer = {
         yCoordinate: 9,
         xCoordinate: 2,
         moveDistance: 1,
-        movePattern: [[-2,-2], [-2,2], [2,2], [2,-2]],
+        movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-elephant.svg",
         killed: false
@@ -276,7 +285,7 @@ let redPlayer = {
         yCoordinate: 9,
         xCoordinate: 6,
         moveDistance: 1,
-        movePattern: [[-2,-2], [-2,2], [2,2], [2,-2]],
+        movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-elephant.svg",
         killed: false
@@ -480,7 +489,7 @@ let bluePlayer = {
         yCoordinate: 0,
         xCoordinate: 2,
         moveDistance: 1,
-        movePattern:[[-2,-2], [-2,2], [2,2], [2,-2]],
+        movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
         killed: false
@@ -493,7 +502,7 @@ let bluePlayer = {
         yCoordinate: 0,
         xCoordinate: 6,
         moveDistance: 1,
-        movePattern:[[-2,-2], [-2,2], [2,2], [2,-2]],
+        movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
         killed: false
