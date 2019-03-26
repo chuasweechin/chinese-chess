@@ -43,6 +43,11 @@ var placeChessPiecesAtStartingPosition = function (player) {
         let cellElement = document.querySelector('[yCoordinate="' + chessPiece.yCoordinate + '"][xCoordinate="' + chessPiece.xCoordinate + '"]');
         let imgElement = document.createElement("img");
 
+        // red always start first, add hover effect for red chess piece
+        if (chessPiece.color === "red") {
+            imgElement.className = "chessPiece";
+        }
+
         imgElement.setAttribute("id", chessPiece.id);
         imgElement.setAttribute("displayName", chessPiece.displayName);
         imgElement.setAttribute("src", chessPiece.image);
@@ -81,6 +86,7 @@ var endPlayerTurn = function () {
         });
 
         redPlayer.turn = false;
+        removeHoverEffectForChessPieces(redPlayer.color);
 
         // enable blue chess pieces once his turn is over
         document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
@@ -88,7 +94,7 @@ var endPlayerTurn = function () {
         });
 
         bluePlayer.turn = true;
-
+        addHoverEffectForChessPieces(bluePlayer.color);
         setGameMessage("It is now Blue's turn");
 
     } else if (bluePlayer.turn === true) {
@@ -98,6 +104,7 @@ var endPlayerTurn = function () {
         });
 
         bluePlayer.turn = false;
+        removeHoverEffectForChessPieces(bluePlayer.color);
 
         // enable red chess pieces once his turn is over
         document.querySelectorAll('tr > td > img[color="red"]').forEach(function(chessPieceElement) {
@@ -105,7 +112,7 @@ var endPlayerTurn = function () {
         });
 
         redPlayer.turn = true;
-
+        addHoverEffectForChessPieces(redPlayer.color);
         setGameMessage("It is now Red's turn");
     }
 }
@@ -184,6 +191,21 @@ var removeEventFromChessPieces = function () {
     });
 }
 
+// add chess piece hover css effect for all the chess pieces
+var addHoverEffectForChessPieces = function (chessPieceColor) {
+    document.querySelectorAll('.chessBoard > table > tr > td > img[color="' + chessPieceColor + '"]')
+        .forEach(function(element) {
+            element.className += "chessPiece";
+        });
+}
+
+// remove chess piece hover css effect for all the chess pieces
+var removeHoverEffectForChessPieces = function (chessPieceColor) {
+    document.querySelectorAll('.chessBoard > table > tr > td > .chessPiece[color="' + chessPieceColor + '"]').forEach(function(element) {
+            element.classList.remove("chessPiece");
+        });
+}
+
 // add cell click event based on the possible movement by chess piece
 var addEventForCells = function () {
     let yAxis = selectedChessPieceElement.parentElement.getAttribute("yCoordinate");
@@ -193,7 +215,7 @@ var addEventForCells = function () {
     playerChessBoard[yAxis][xAxis].possibleMoves().forEach(function(move) {
         let cellElement = document.querySelector('[yCoordinate="' + move.possibleYCoordinate + '"][xCoordinate="' + move.possibleXCoordinate + '"]');
 
-        cellElement.style.backgroundColor = "rgb(140, 140, 138, 0.6)";
+        cellElement.style.backgroundColor = "rgb(127, 145, 147, 0.6)";
         cellElement.addEventListener("click", cellClickEvent);
     });
 }
@@ -209,9 +231,12 @@ var removeEventFromCells = function () {
 // click event for each chess piece
 var chessPieceClickEvent = function (event) {
     selectedChessPieceElement = this;
-    selectedChessPieceElement.className += "selected";
+    selectedChessPieceElement.className += " selected";
 
     this.addEventListener("click", chessPieceDeselectEvent);
+
+    // remove hover css effect on other chess pieces
+    removeHoverEffectForChessPieces(this.getAttribute("color"));
 
     removeEventFromChessPieces();
     addEventForCells();
@@ -221,6 +246,9 @@ var chessPieceClickEvent = function (event) {
 var chessPieceDeselectEvent = function (event) {
     this.classList.remove("selected");
     this.removeEventListener("click", chessPieceDeselectEvent);
+
+    // add  hover css effect on other chess pieces when the chess piece has been deselected
+    addHoverEffectForChessPieces(this.getAttribute("color"));
 
     addEventForChessPieces(this);
     removeEventFromCells();
@@ -249,10 +277,17 @@ var cellClickEvent = function (event) {
                 checkForWin(bluePlayer, redPlayer);
             }
 
+            // add  hover css effect on other chess pieces when the chess piece has been deselected
+            addHoverEffectForChessPieces(selectedChessPieceColor);
+
             endPlayerTurn();
         }
     } else {
-        movePlayerChessPiece(this);
+            movePlayerChessPiece(this);
+
+            // add  hover css effect on other chess pieces when the chess piece has been deselected
+            addHoverEffectForChessPieces(selectedChessPieceColor);
+
         endPlayerTurn();
     }
 }
@@ -286,3 +321,5 @@ generateGame();
 // 1. create a score board for players
 // 2. track what pieces are dead for the player
 // 3. improve UI to allow player to know each other turn
+
+// to-do: flying general

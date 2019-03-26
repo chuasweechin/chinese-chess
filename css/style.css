@@ -5,7 +5,7 @@ body {
 .chessBoard > table {
 	margin: auto;
 	min-width: 500px;
-	border-spacing: 2px;
+	border-spacing: 3px;
 	background-size: cover;
 	border: 1px solid #282923;
 	background-repeat: no-repeat;
@@ -13,8 +13,8 @@ body {
 }
 
 .chessBoard > table > tr > td {
-	min-width: 54px;
-	height: 54px;
+	height: 52px;
+	min-width: 52px;
 	border-radius: 50px;
 }
 
@@ -25,12 +25,12 @@ body {
 	border-radius: 50%;
 }
 
-.chessBoard > table > tr > td > img:hover {
-	box-shadow: 0 0 5px 5px rgba(140, 140, 138, 0.6);
+.chessBoard > table > tr > td > .chessPiece:hover {
+	box-shadow: 0 0 5px 5px rgba(127, 145, 147, 0.9);
 }
 
 .selected {
-	box-shadow: 0 0 5px 5px rgba(140, 140, 138, 0.6);
+	box-shadow: 0 0 5px 5px rgba(127, 145, 147, 0.9);
 }
 
 .gameMessage {

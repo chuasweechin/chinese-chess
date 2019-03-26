@@ -2,11 +2,12 @@ var generatePossibleMoveBasedOnMovePattern = function () {
     let possibleMoves = [];
 
     let chessPieceName = this.name;
+    let chessPieceColor = this.color;
     let chessPieceYCoordinate = this.yCoordinate;
     let chessPieceXCoordinate = this.xCoordinate;
     let chessPieceMoveDistance = this.moveDistance;
 
-    this.movePattern.forEach(function(pattern) {
+    this.movePattern.forEach(function(pattern, index) {
         let yCoordinatePattern = pattern[0];
         let xCoordinatePattern = pattern[1];
         let somethingInBetweenCannon = false;
@@ -15,48 +16,109 @@ var generatePossibleMoveBasedOnMovePattern = function () {
             let computedYCoordinate = chessPieceYCoordinate + yCoordinatePattern * d;
             let computedXCoordinate = chessPieceXCoordinate + xCoordinatePattern * d;
 
-            if (chessPieceName === "general" || chessPieceName === "advisor" || chessPieceName === "elephant" || chessPieceName === "chariot" || chessPieceName === "soldier") {
+            // make sure that the move is constraint within the chess board
+            if (chessBoardBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
+                if (chessPieceName === "general") {
+                    //TODO: flying general
 
-                if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
-                    // check for collision with other chess pieces
-                    possibleMoves.push({
-                        possibleYCoordinate: computedYCoordinate,
-                        possibleXCoordinate: computedXCoordinate
-                    });
+                    // make sure that the move is constraint within the camp
+                    if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
+                        // check for collision with other chess pieces
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
 
-                    // break the loop if a collision is detected
-                    if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
-                        break;
+                        // break the loop if a collision is detected
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                            break;
+                        }
                     }
-                }
-            } else if (chessPieceName === "cannon") {
-                if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
-                    possibleMoves.push({
-                        possibleYCoordinate: computedYCoordinate,
-                        possibleXCoordinate: computedXCoordinate
-                    });
+                } else if (chessPieceName === "advisor") {
+                    // make sure that the move is constraint within the camp
+                    if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
+                        // check for collision with other chess pieces
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
 
-                    if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
-                        && somethingInBetweenCannon === false) {
-                        // remove the in between chess piece as this cannot be attacked
-                        possibleMoves.pop();
-                        somethingInBetweenCannon = true;
-
-                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] === ""
-                        && somethingInBetweenCannon === true) {
-                        //remove the empty spaces from the move zone as this is not allowed
-                        possibleMoves.pop();
-
-                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
-                        && somethingInBetweenCannon === true) {
-                        break;
+                        // break the loop if a collision is detected
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                            break;
+                        }
                     }
-                }
-            } else if (chessPieceName === "horse") {
-                let movementBlock = [[-1,0], [0,1], [1,0], [0,-1]];
+                } else if (chessPieceName === "elephant") {
+                    // make sure that the move is constraint within the camp
+                    if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
 
-                if (chessBoardUpperAndLowerBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
+                        // break the loop if a collision is detected
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                            break;
+                        }
+                    }
+                } else if (chessPieceName === "horse") {
+                    console.log("something");
+                } else if (chessPieceName === "chariot") {
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
 
+                        // break the loop if a collision is detected
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                            break;
+                        }
+                } else if (chessPieceName === "cannon") {
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
+
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                            && somethingInBetweenCannon === false) {
+                            // remove the in between chess piece as this cannot be attacked
+                            possibleMoves.pop();
+                            somethingInBetweenCannon = true;
+
+                        } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] === ""
+                            && somethingInBetweenCannon === true) {
+                            //remove the empty spaces from the move zone as this is not allowed
+                            possibleMoves.pop();
+
+                        } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                            && somethingInBetweenCannon === true) {
+                            break;
+                        }
+                } else if (chessPieceName === "soldier") {
+                    // check if the soldier is within the his own land
+                    if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === false) {
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
+
+                        // break the loop if a collision is detected
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                            break;
+                        }
+                    }
+                    // if not, downgrade soldier mobility to only index 1
+                    else if (index === 0){
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
+
+                        // break the loop if a collision is detected
+                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -65,22 +127,67 @@ var generatePossibleMoveBasedOnMovePattern = function () {
     return possibleMoves;
 }
 
-var chessBoardUpperAndLowerBoundaryCheck = function (computedYCoordinate, computedXCoordinate) {
+var chessBoardBoundaryCheck = function (computedYCoordinate, computedXCoordinate) {
+    let yAxisLowerBoundary = 0;
+    let yAxisUpperBoundary = 9;
+
+    let xAxisLowerBoundary = 0;
+    let xAxisUpperBoundary = 8;
+
     // return true if the coordinates are within the chess board boundary
-    if (computedYCoordinate < yAxisUpperBoundary &&
-            computedXCoordinate < xAxisUpperBoundary &&
-                computedYCoordinate >= yxAxisLowerBoundary &&
-                    computedXCoordinate >= yxAxisLowerBoundary) {
+    if (computedYCoordinate >= yAxisLowerBoundary && computedYCoordinate <= yAxisUpperBoundary
+            && computedXCoordinate >= xAxisLowerBoundary && computedXCoordinate <= xAxisUpperBoundary) {
         return true;
     }
 
     return false;
 }
 
-let yxAxisLowerBoundary = 0;
+var campBoundaryCheck = function (computedYCoordinate, computedXCoordinate, chessPieceColor) {
+    let xAxisLowerBoundary = 3;
+    let xAxisUpperBoundary= 5;
+    let yAxisLowerBoundary, yAxisUpperBoundary;
 
-let yAxisUpperBoundary = 10;
-let xAxisUpperBoundary = 9;
+    // different color has different camp boundary
+    if (chessPieceColor === "red") {
+        yAxisLowerBoundary = 7;
+        yAxisUpperBoundary = 9;
+    } else if (chessPieceColor === "blue") {
+        yAxisLowerBoundary = 0;
+        yAxisUpperBoundary = 2;
+    }
+
+    // return true if the coordinates are within the camp site boundary
+    if (computedYCoordinate >= yAxisLowerBoundary && computedYCoordinate <= yAxisUpperBoundary
+            && computedXCoordinate >= xAxisLowerBoundary && computedXCoordinate <= xAxisUpperBoundary) {
+        return true;
+    }
+
+    return false;
+}
+
+var landBoundaryCheck = function (computedYCoordinate, computedXCoordinate, chessPieceColor) {
+    let xAxisLowerBoundary = 0;
+    let xAxisUpperBoundary= 8;
+    let yAxisLowerBoundary, yAxisUpperBoundary;
+
+    // different color has different land boundary
+    if (chessPieceColor === "red") {
+        yAxisLowerBoundary = 5;
+        yAxisUpperBoundary = 9;
+    } else if (chessPieceColor === "blue") {
+        yAxisLowerBoundary = 0;
+        yAxisUpperBoundary = 4;
+    }
+
+    // return true if the coordinates are within the camp site boundary
+    if (computedYCoordinate >= yAxisLowerBoundary && computedYCoordinate <= yAxisUpperBoundary
+            && computedXCoordinate >= xAxisLowerBoundary && computedXCoordinate <= xAxisUpperBoundary) {
+        return true;
+    }
+
+    return false;
+}
 
 let playerChessBoard = "";
 let imageFilePath = "img/";
@@ -97,12 +204,12 @@ let redPlayer = {
         id: "r-g-1", // naming convention: color-name-id
         color: "red",
         name: "general",
-        displayName: "General",
+        displayName: "General", // for display purposes
         yCoordinate: 9,
         xCoordinate: 4,
-        moveDistance: 1, // distance define how far the chess piece can move from itself
+        moveDistance: 1, // define how far the chess piece can move from its position
         movePattern: [[-1,0], [0,1], [1,0], [0,-1]], // formula to compute possible move
-        possibleMoves: generatePossibleMoveBasedOnMovePattern, // method to calculate move
+        possibleMoves: generatePossibleMoveBasedOnMovePattern, // function to calculate move
         image: imageFilePath + "red-general.svg",
         killed: false
     },
@@ -241,11 +348,10 @@ let redPlayer = {
         color: "red",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 6,
         xCoordinate: 0,
         moveDistance: 1,
-        movePattern:[[-1,0]],
+        movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
         killed: false
@@ -255,11 +361,10 @@ let redPlayer = {
         color: "red",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 6,
         xCoordinate: 2,
         moveDistance: 1,
-        movePattern:[[-1,0]],
+        movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
         killed: false
@@ -269,11 +374,10 @@ let redPlayer = {
         color: "red",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 6,
         xCoordinate: 4,
         moveDistance: 1,
-        movePattern:[[-1,0]],
+        movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
         killed: false
@@ -283,11 +387,10 @@ let redPlayer = {
         color: "red",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 6,
         xCoordinate: 6,
         moveDistance: 1,
-        movePattern:[[-1,0]],
+        movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
         killed: false
@@ -297,11 +400,10 @@ let redPlayer = {
         color: "red",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 6,
         xCoordinate: 8,
         moveDistance: 1,
-        movePattern:[[-1,0]],
+        movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
         killed: false
@@ -463,11 +565,10 @@ let bluePlayer = {
         color: "blue",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 3,
         xCoordinate: 0,
         moveDistance: 1,
-        movePattern:[[1,0]],
+        movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
         killed: false
@@ -477,11 +578,10 @@ let bluePlayer = {
         color: "blue",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 3,
         xCoordinate: 2,
         moveDistance: 1,
-        movePattern:[[1,0]],
+        movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
         killed: false
@@ -491,11 +591,10 @@ let bluePlayer = {
         color: "blue",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 3,
         xCoordinate: 4,
         moveDistance: 1,
-        movePattern:[[1,0]],
+        movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
         killed: false
@@ -505,11 +604,10 @@ let bluePlayer = {
         color: "blue",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 3,
         xCoordinate: 6,
         moveDistance: 1,
-        movePattern:[[1,0]],
+        movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
         killed: false
@@ -519,11 +617,10 @@ let bluePlayer = {
         color: "blue",
         name: "soldier",
         displayName: "Soldier",
-        rankUp: false,
         yCoordinate: 3,
         xCoordinate: 8,
         moveDistance: 1,
-        movePattern:[[1,0]],
+        movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
         killed: false
