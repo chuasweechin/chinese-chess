@@ -40,6 +40,7 @@ var renderChessBoardUI = function (chessBoard) {
     }
 
     document.querySelector(".chessBoard").appendChild(tableElement);
+    createScoreBoard();
 }
 
 // set the starting position for on the chess board
@@ -67,6 +68,46 @@ var placeChessPiecesAtStartingPosition = function (player) {
     });
 }
 
+var createScoreBoard = function () {
+    // create score board for red
+    let redDivNameElement = document.createElement("div");
+    redDivNameElement.className = "name";
+
+    let redDivStatslement = document.createElement("div");
+    redDivStatslement.className = "stats";
+
+    let redDivKilledElement = document.createElement("div");
+    redDivKilledElement.className = "killed";
+
+    document.querySelector(".redPlayer").appendChild(redDivNameElement);
+    document.querySelector(".redPlayer").appendChild(redDivStatslement);
+    document.querySelector(".redPlayer").appendChild(redDivKilledElement);
+
+    // create score board for blue
+    let blueDivNameElement = document.createElement("div");
+    blueDivNameElement.className = "name";
+
+    let blueDivStatslement = document.createElement("div");
+    blueDivStatslement.className = "stats";
+
+    let blueDivKilledElement = document.createElement("div");
+    blueDivKilledElement.className = "killed";
+
+    document.querySelector(".bluePlayer").appendChild(blueDivNameElement);
+    document.querySelector(".bluePlayer").appendChild(blueDivStatslement);
+    document.querySelector(".bluePlayer").appendChild(blueDivKilledElement);
+}
+
+var updateScoreBoard = function () {
+    document.querySelector(".redPlayer > .name").innerHTML = "Name: " + redPlayer.name;
+    document.querySelector(".redPlayer > .stats").innerHTML = "Win: " + redPlayer.win + " Loss: " + redPlayer.loss;
+    document.querySelector(".redPlayer > .killed").innerHTML = "Chess Piece Killed: " + "0";
+
+    document.querySelector(".bluePlayer > .name").innerHTML = "Name: " + bluePlayer.name;
+    document.querySelector(".bluePlayer > .stats").innerHTML = "Win: " + bluePlayer.win + " Loss: " + bluePlayer.loss;
+    document.querySelector(".bluePlayer > .killed").innerHTML = "Chess Piece Killed: " + "0";
+}
+
 var generateGame = function () {
     playerChessBoard = createChessBoardBackEnd();
     renderChessBoardUI(playerChessBoard);
@@ -79,15 +120,7 @@ var generateGame = function () {
         chessPieceElement.removeEventListener("click", chessPieceClickEvent);
     });
 
-    setGameMessage("It is now Red's turn");
-}
-
-var setScoreBoard = function () {
-}
-
-// set game message for the player
-var setGameMessage = function (message) {
-    document.querySelector(".gameMessage").innerHTML = message;
+    updateScoreBoard();
 }
 
 /*
@@ -113,7 +146,7 @@ var endPlayerTurn = function () {
 
         bluePlayer.turn = true;
         addHoverEffectForChessPieces(bluePlayer.color);
-        setGameMessage("It is now Blue's turn");
+        updateScoreBoard();
 
     } else if (bluePlayer.turn === true) {
        // disable blue chess pieces once blue turn is over
@@ -131,7 +164,7 @@ var endPlayerTurn = function () {
 
         redPlayer.turn = true;
         addHoverEffectForChessPieces(redPlayer.color);
-        setGameMessage("It is now Red's turn");
+        updateScoreBoard();
     }
 }
 
@@ -166,9 +199,6 @@ var checkForWin = function (attackingPlayer, defendingPlayer) {
             setTimeout(function () {
                 alert(attackingPlayer.name + ", you have won the game!");
             }, 250);
-
-            setGameMessage(attackingPlayer.name + ", you have won the game!");
-
         }
     });
 }
@@ -256,7 +286,7 @@ var addEventForCells = function () {
     playerChessBoard[yAxis][xAxis].possibleMoves().forEach(function(move) {
         let cellElement = document.querySelector('[yCoordinate="' + move.possibleYCoordinate + '"][xCoordinate="' + move.possibleXCoordinate + '"]');
 
-        cellElement.style.backgroundColor = "rgb(127, 145, 147, 0.6)";
+        cellElement.style.backgroundColor = "rgb(255, 134, 134, 0.6)";
         cellElement.addEventListener("click", cellClickEvent);
     });
 }
@@ -344,14 +374,3 @@ var cellClickEvent = function (event) {
 ================================
 */
 generateGame();
-
-
-
-
-
-// outstanding task
-// 1. create a score board for players
-// 2. track what pieces are dead for the player
-// 3. improve UI to allow player to know each other turn
-
-// to-do: flying general

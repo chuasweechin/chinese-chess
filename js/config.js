@@ -289,7 +289,7 @@ let redPlayer = {
         yCoordinate: 9,
         xCoordinate: 1,
         moveDistance: 1,
-        movePattern: [[-2,-1], [-2,1], [-1,2], [1,2], [2,1], [2,-1],[-1,-2], [1,-2]],
+        movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-horse.svg",
         killed: false
@@ -302,10 +302,7 @@ let redPlayer = {
         yCoordinate: 9,
         xCoordinate: 7,
         moveDistance: 1,
-        movePattern:[[-2,-1,-1,0], [-2,1,-1,0],
-                     [-1,2,0,1], [1,2,0,1],
-                     [2,1,1,0], [2,-1,1,0],
-                     [-1,-2,0,-1], [1,-2,0,-1]],
+        movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-horse.svg",
         killed: false
@@ -509,7 +506,7 @@ let bluePlayer = {
         yCoordinate: 0,
         xCoordinate: 1,
         moveDistance: 1,
-        movePattern:[[-2,-1], [-2,1], [-1,2], [1,2], [2,1], [2,-1],[-1,-2], [1,-2]],
+        movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-horse.svg",
         killed: false
@@ -522,7 +519,7 @@ let bluePlayer = {
         yCoordinate: 0,
         xCoordinate: 7,
         moveDistance: 1,
-        movePattern:[[-2,-1], [-2,1], [-1,2], [1,2], [2,1], [2,-1],[-1,-2], [1,-2]],
+        movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-horse.svg",
         killed: false
