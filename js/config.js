@@ -20,7 +20,6 @@ var generatePossibleMoveBasedOnMovePattern = function () {
             if (chessBoardBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
                 if (chessPieceName === "general") {
                     //TODO: flying general
-
                     // make sure that the move is constraint within the camp
                     if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
                         // check for collision with other chess pieces
@@ -62,7 +61,24 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         }
                     }
                 } else if (chessPieceName === "horse") {
-                    console.log("something");
+                    // get the coordinates that block movement for horse
+                    let blockYCoordinate = chessPieceYCoordinate + pattern[2];
+                    let blockXCoordinate = chessPieceXCoordinate + pattern[3];
+
+                    possibleMoves.push({
+                        possibleYCoordinate: computedYCoordinate,
+                        possibleXCoordinate: computedXCoordinate
+                    });
+
+                    // break the loop if a collision is detected
+                    if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                        break;
+                    }
+
+                    // remove the possible move if block move is detected
+                    if (playerChessBoard[blockYCoordinate][blockXCoordinate] !== "") {
+                        possibleMoves.pop();
+                    }
                 } else if (chessPieceName === "chariot") {
                         possibleMoves.push({
                             possibleYCoordinate: computedYCoordinate,
@@ -95,7 +111,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                             break;
                         }
                 } else if (chessPieceName === "soldier") {
-                    // check if the soldier is within the his own land
+                    // if the soldier is in enemy land, allow all move for solder
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === false) {
                         possibleMoves.push({
                             possibleYCoordinate: computedYCoordinate,
@@ -107,7 +123,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                             break;
                         }
                     }
-                    // if not, downgrade soldier mobility to only index 1
+                    // if solder is not in enemy land, limit soldier mobility to only index 1
                     else if (index === 0){
                         possibleMoves.push({
                             possibleYCoordinate: computedYCoordinate,
@@ -286,7 +302,10 @@ let redPlayer = {
         yCoordinate: 9,
         xCoordinate: 7,
         moveDistance: 1,
-        movePattern:[[-2,-1], [-2,1], [-1,2], [1,2], [2,1], [2,-1],[-1,-2], [1,-2]],
+        movePattern:[[-2,-1,-1,0], [-2,1,-1,0],
+                     [-1,2,0,1], [1,2,0,1],
+                     [2,1,1,0], [2,-1,1,0],
+                     [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-horse.svg",
         killed: false

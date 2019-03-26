@@ -1,3 +1,8 @@
+/*
+================================
+= function to setup the game   =
+================================
+*/
 // create back end 10 x 9 chess board
 var createChessBoardBackEnd = function () {
     let chessBoard = [];
@@ -77,6 +82,19 @@ var generateGame = function () {
     setGameMessage("It is now Red's turn");
 }
 
+var setScoreBoard = function () {
+}
+
+// set game message for the player
+var setGameMessage = function (message) {
+    document.querySelector(".gameMessage").innerHTML = message;
+}
+
+/*
+================================
+= helper function for the game =
+================================
+*/
 // determine whose turn is it and disable the enemy chess pieces
 var endPlayerTurn = function () {
     if (redPlayer.turn === true) {
@@ -137,6 +155,29 @@ var movePlayerChessPiece = function (cellElement) {
     selectedChessPieceElement = null;
 }
 
+// check if player win by checking if the enemy general is killed
+var checkForWin = function (attackingPlayer, defendingPlayer) {
+    defendingPlayer.chessPieces.forEach (function (chessPiece) {
+        if (chessPiece.name === "general" && chessPiece.killed === true) {
+
+            // disable the chess board since a player has been determined
+            removeEventFromChessPieces();
+
+            setTimeout(function () {
+                alert(attackingPlayer.name + ", you have won the game!");
+            }, 250);
+
+            setGameMessage(attackingPlayer.name + ", you have won the game!");
+
+        }
+    });
+}
+
+/*
+================================
+= helper function for elements =
+================================
+*/
 // update the UI chess piece activity onto the back end array and chess piece data
 var movePlayerChessPieceUpdateBackEnd = function (player, cellElement) {
     let chessPieceId = selectedChessPieceElement.getAttribute("id");
@@ -228,6 +269,11 @@ var removeEventFromCells = function () {
     });
 }
 
+/*
+================================
+= helper function for elements =
+================================
+*/
 // click event for each chess piece
 var chessPieceClickEvent = function (event) {
     selectedChessPieceElement = this;
@@ -292,30 +338,16 @@ var cellClickEvent = function (event) {
     }
 }
 
-// check if player win by checking if the enemy general is killed
-var checkForWin = function (attackingPlayer, defendingPlayer) {
-    defendingPlayer.chessPieces.forEach (function (chessPiece) {
-        if (chessPiece.name === "general" && chessPiece.killed === true) {
-
-            // disable the chess board since a player has been determined
-            removeEventFromChessPieces();
-
-            setTimeout(function () {
-                alert(attackingPlayer.name + ", you have won the game!");
-            }, 250);
-
-            setGameMessage(attackingPlayer.name + ", you have won the game!");
-
-        }
-    });
-}
-
-// set game message for the player
-var setGameMessage = function (message) {
-    document.querySelector(".gameMessage").innerHTML = message;
-}
-
+/*
+================================
+= main                         =
+================================
+*/
 generateGame();
+
+
+
+
 
 // outstanding task
 // 1. create a score board for players
