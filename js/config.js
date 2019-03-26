@@ -210,11 +210,11 @@ let imageFilePath = "img/";
 let selectedChessPieceElement = "";
 
 let redPlayer = {
-    name: "Red",
+    name: "Red Player",
     color: "red",
     turn: true,
     win: 0,
-    loss: 0,
+    lose: 0,
     chessPieces:
     [{
         id: "r-g-1", // naming convention: color-name-id
@@ -427,11 +427,11 @@ let redPlayer = {
 }
 
 let bluePlayer = {
-    name: "Blue",
+    name: "Blue Player",
     color: "blue",
     turn: false,
     win: 0,
-    loss: 0,
+    lose: 0,
     chessPieces:
     [{
         id: "b-g-1",

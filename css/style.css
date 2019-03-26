@@ -1,10 +1,11 @@
 body {
 	margin: 0px;
 	text-align: center;
+	font-family: 'Roboto', sans-serif;
 }
 
 .scoreBoard {
-	width: 60%;
+	width: 50%;
 	height: 110px;
 	display: flex;
 	justify-content: space-around;
@@ -12,31 +13,32 @@ body {
 	margin: 10px auto 10px auto;
 }
 
-.redPlayer {
-	width: 48%;
+.redPlayer, .bluePlayer {
+	width: 45%;
 	height: 110px;
-	font-size: 18px;
+	font-size: 16px;
 	border-radius: 20px;
 	border: 1px solid black;
-	background-color: #FF8686;
-
+	text-align: left;
+	padding-left: 20px;
+	vertical-align: center;
 }
 
-.redPlayer > div:first-child {
-	margin-top: 20px;
+.redPlayer {
+	background-color: #FF8686;
 }
 
 .bluePlayer {
-	width: 48%;
-	height: 110px;
-	font-size: 18px;
-	border-radius: 20px;
-	border: 1px solid black;
 	background-color: #DDEFFD;
 }
 
-.bluePlayer > div:first-child {
-	margin-top: 20px;
+.redPlayer > .name, .bluePlayer > .name {
+	margin-top: 6px;
+}
+
+.redPlayer > .killed > img, .bluePlayer > .killed > img{
+	width: 25px;
+	height: 25px;
 }
 
 .chessBoard > table {
