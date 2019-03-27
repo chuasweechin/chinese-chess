@@ -391,9 +391,9 @@ var removeEventFromCells = function () {
 }
 
 /*
-================================
-= helper function for elements =
-================================
+=======================================
+= event handler function for elements =
+=======================================
 */
 // click event for each chess piece
 var chessPieceClickEvent = function (event) {
@@ -465,28 +465,47 @@ var cellClickEvent = function (event) {
 
 /*
 ================================
-= helper function for elements =
+= function for computer player  =
 ================================
 */
-// get all possible move
-var getAllPossibleMoveByBlue = function () {
+// get all possible move for computer player
+var getAllPossibleMoveForComputerPlayer = function (player) {
     let possibleMoves = [];
 
     for (let a = 0; a < playerChessBoard.length; a++) {
         for (let b = 0; b < playerChessBoard[a].length; b++) {
-            if (playerChessBoard[a][b].color === "blue") {
-                possibleMoves.push(playerChessBoard[a][b].name);
+            if (playerChessBoard[a][b].color === player.color) {
                 playerChessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
-
+                    possibleMove["id"] = playerChessBoard[a][b].id;
                     possibleMoves.push(possibleMove);
                 });
             }
         }
     }
 
-    console.log(possibleMoves);
+    let randomlyPickOnePossibleMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
+
+    let chessPieceComputerPlayerPicked = document.querySelector('[id="' + randomlyPickOnePossibleMove.id + '"]');
+    chessPieceComputerPlayerPicked.click();
+
+    let moveComputerPlayerPicked = document.querySelector('[yCoordinate="' + randomlyPickOnePossibleMove.possibleYCoordinate + '"][xCoordinate="' + randomlyPickOnePossibleMove.possibleXCoordinate + '"]');
+
+    moveComputerPlayerPicked.click();
 }
 
+// get all possible move for computer player
+var runComputerPlayerVsComputerPlayer = function () {
+     for (let i = 1; i < 20; i++) {
+
+         setTimeout(function() {
+             getAllPossibleMoveByPlayer(redPlayer);
+         }, 2000 * i);
+
+         setTimeout(function() {
+             getAllPossibleMoveByPlayer(bluePlayer);
+         }, 2000 * i);
+    }
+}
 
 /*
 ================================
