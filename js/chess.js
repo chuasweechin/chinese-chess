@@ -1,5 +1,6 @@
 var generatePossibleMoveBasedOnMovePattern = function () {
     let possibleMoves = [];
+    let flyingGeneralCheck = false;
 
     let chessPieceName = this.name;
     let chessPieceColor = this.color;
@@ -21,14 +22,16 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                 if (chessPieceName === "general") {
                     // make sure that the move is constraint within the camp
                     if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
-                        // check for collision with other chess pieces
-                        possibleMoves.push({
-                            possibleYCoordinate: computedYCoordinate,
-                            possibleXCoordinate: computedXCoordinate
-                        });
+                        // disable move that attack player own piece
+                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                            possibleMoves.push({
+                                possibleYCoordinate: computedYCoordinate,
+                                possibleXCoordinate: computedXCoordinate
+                            });
+                        }
 
                         // check for flying general move
-                        if (index === 0) {
+                        if (flyingGeneralCheck === false) {
                             let somethingInBetweenGeneral = false;
                             let redGeneralYCoordinate, redGeneralXCoordinate;
                             let blueGeneralYCoordinate, blueGeneralXCoordinate;
@@ -66,6 +69,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                                             possibleXCoordinate: blueGeneralXCoordinate
                                         });
                                     } else if (chessPieceColor === "blue") {
+                                        console.log("here");
                                          possibleMoves.push({
                                             possibleYCoordinate: redGeneralYCoordinate,
                                             possibleXCoordinate: redGeneralXCoordinate
@@ -73,6 +77,9 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                                     }
                                 }
                             }
+
+                            // this is to ensure this check is only done once
+                            flyingGeneralCheck = true;
                         }
 
                         // break the loop if a collision is detected
@@ -84,11 +91,12 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                 } else if (chessPieceName === "advisor") {
                     // make sure that the move is constraint within the camp
                     if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
-                        // check for collision with other chess pieces
-                        possibleMoves.push({
-                            possibleYCoordinate: computedYCoordinate,
-                            possibleXCoordinate: computedXCoordinate
-                        });
+                       if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                            possibleMoves.push({
+                                possibleYCoordinate: computedYCoordinate,
+                                possibleXCoordinate: computedXCoordinate
+                            });
+                        }
 
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
@@ -102,10 +110,12 @@ var generatePossibleMoveBasedOnMovePattern = function () {
 
                     // make sure that the move is constraint within the camp
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
-                        possibleMoves.push({
-                            possibleYCoordinate: computedYCoordinate,
-                            possibleXCoordinate: computedXCoordinate
-                        });
+                       if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                            possibleMoves.push({
+                                possibleYCoordinate: computedYCoordinate,
+                                possibleXCoordinate: computedXCoordinate
+                            });
+                        }
 
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
@@ -122,10 +132,12 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                     let blockYCoordinate = chessPieceYCoordinate + pattern[2];
                     let blockXCoordinate = chessPieceXCoordinate + pattern[3];
 
-                    possibleMoves.push({
-                        possibleYCoordinate: computedYCoordinate,
-                        possibleXCoordinate: computedXCoordinate
-                    });
+                    if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
+                    }
 
                     // break the loop if a collision is detected
                     if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
@@ -137,20 +149,26 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         possibleMoves.pop();
                     }
                 } else if (chessPieceName === "chariot") {
-                        possibleMoves.push({
-                            possibleYCoordinate: computedYCoordinate,
-                            possibleXCoordinate: computedXCoordinate
-                        });
+
+                        // disable move that attack player own piece
+                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                            possibleMoves.push({
+                                possibleYCoordinate: computedYCoordinate,
+                                possibleXCoordinate: computedXCoordinate
+                            });
+                        }
 
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                             break;
                         }
                 } else if (chessPieceName === "cannon") {
-                        possibleMoves.push({
-                            possibleYCoordinate: computedYCoordinate,
-                            possibleXCoordinate: computedXCoordinate
-                        });
+                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                            possibleMoves.push({
+                                possibleYCoordinate: computedYCoordinate,
+                                possibleXCoordinate: computedXCoordinate
+                            });
+                        }
 
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
                             && somethingInBetweenCannon === false) {
@@ -170,10 +188,12 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                 } else if (chessPieceName === "soldier") {
                     // if the soldier is in enemy land, allow all move for solder
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === false) {
-                        possibleMoves.push({
-                            possibleYCoordinate: computedYCoordinate,
-                            possibleXCoordinate: computedXCoordinate
-                        });
+                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
+                            possibleMoves.push({
+                                possibleYCoordinate: computedYCoordinate,
+                                possibleXCoordinate: computedXCoordinate
+                            });
+                        }
 
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
@@ -285,7 +305,8 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern, // function to calculate move
         image: imageFilePath + "red-general.svg",
         killed: false,
-        checkmate: false
+        checkmate: false,
+        weightage: 900
     },
     {
         id: "r-a-1",
@@ -298,7 +319,8 @@ let redPlayer = {
         movePattern: [[-1,-1], [-1,1], [1,1], [1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-advisor.svg",
-        killed: false
+        killed: false,
+        weightage: 20
     },
     {
         id: "r-a-2",
@@ -311,7 +333,8 @@ let redPlayer = {
         movePattern: [[-1,-1], [-1,1], [1,1], [1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-advisor.svg",
-        killed: false
+        killed: false,
+        weightage: 20
     },
     {
         id: "r-e-1",
@@ -324,7 +347,8 @@ let redPlayer = {
         movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-elephant.svg",
-        killed: false
+        killed: false,
+        weightage: 30
     },
     {
         id: "r-e-2",
@@ -337,7 +361,8 @@ let redPlayer = {
         movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-elephant.svg",
-        killed: false
+        killed: false,
+        weightage: 30
     },
     {
         id: "r-h-1",
@@ -350,7 +375,8 @@ let redPlayer = {
         movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-horse.svg",
-        killed: false
+        killed: false,
+        weightage: 40
     },
     {
         id: "r-h-2",
@@ -363,7 +389,8 @@ let redPlayer = {
         movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-horse.svg",
-        killed: false
+        killed: false,
+        weightage: 40
     },
     {
         id: "r-ch-1",
@@ -376,7 +403,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-chariot.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "r-ch-2",
@@ -389,7 +417,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-chariot.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "r-ca-1",
@@ -402,7 +431,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-cannon.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "r-ca-2",
@@ -415,7 +445,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-cannon.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "r-s-1",
@@ -428,7 +459,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "r-s-2",
@@ -441,7 +473,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "r-s-3",
@@ -454,7 +487,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "r-s-4",
@@ -467,7 +501,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "r-s-5",
@@ -480,7 +515,8 @@ let redPlayer = {
         movePattern:[[-1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     }]
 }
 
@@ -503,7 +539,8 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-general.svg",
         killed: false,
-        checkmate: false
+        checkmate: false,
+        weightage: 900
     },
     {
         id: "b-a-1",
@@ -529,7 +566,8 @@ let bluePlayer = {
         movePattern:[[-1,-1], [-1,1], [1,1], [1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-advisor.svg",
-        killed: false
+        killed: false,
+        weightage: 20
     },
     {
         id: "b-e-1",
@@ -542,7 +580,8 @@ let bluePlayer = {
         movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
-        killed: false
+        killed: false,
+        weightage: 20
     },
     {
         id: "b-e-2",
@@ -555,7 +594,8 @@ let bluePlayer = {
         movePattern: [[-2,-2,-1,-1], [-2,2,-1,1], [2,2,1,1], [2,-2,1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
-        killed: false
+        killed: false,
+        weightage: 30
     },
     {
         id: "b-h-1",
@@ -568,7 +608,8 @@ let bluePlayer = {
         movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-horse.svg",
-        killed: false
+        killed: false,
+        weightage: 40
     },
     {
         id: "b-h-2",
@@ -581,7 +622,8 @@ let bluePlayer = {
         movePattern: [[-2,-1,-1,0], [-2,1,-1,0], [-1,2,0,1], [1,2,0,1], [2,1,1,0], [2,-1,1,0], [-1,-2,0,-1], [1,-2,0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-horse.svg",
-        killed: false
+        killed: false,
+        weightage: 40
     },
     {
         id: "b-ch-1",
@@ -594,7 +636,8 @@ let bluePlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-chariot.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "b-ch-2",
@@ -607,7 +650,8 @@ let bluePlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-chariot.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "b-ca-1",
@@ -620,7 +664,8 @@ let bluePlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-cannon.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "b-ca-2",
@@ -633,7 +678,8 @@ let bluePlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-cannon.svg",
-        killed: false
+        killed: false,
+        weightage: 50
     },
     {
         id: "b-s-1",
@@ -646,7 +692,8 @@ let bluePlayer = {
         movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "b-s-2",
@@ -659,7 +706,8 @@ let bluePlayer = {
         movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "b-s-3",
@@ -672,7 +720,8 @@ let bluePlayer = {
         movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "b-s-4",
@@ -685,7 +734,8 @@ let bluePlayer = {
         movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     },
     {
         id: "b-s-5",
@@ -698,6 +748,7 @@ let bluePlayer = {
         movePattern:[[1,0], [0,1], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-soldier.svg",
-        killed: false
+        killed: false,
+        weightage: 10
     }]
 }

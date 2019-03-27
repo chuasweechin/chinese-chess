@@ -374,7 +374,7 @@ var addEventForCells = function () {
 
         if (redPlayer.turn === true) {
             cellElement.style.backgroundColor = "rgb(158, 0, 0, 0.3)";
-        } else if (bluePlayer.turn === true) {
+        } else {
             cellElement.style.backgroundColor = "rgb(0, 94, 146, 0.3)";
         }
 
@@ -430,34 +430,30 @@ var cellClickEvent = function (event) {
     if (this.childNodes.length > 0) {
         let cellChessPieceColor = this.childNodes[0].getAttribute("color");
 
-        // disable friendly fire
-        if (selectedChessPieceColor === cellChessPieceColor) {
-            alert("You cannot attack your own " + this.childNodes[0].getAttribute("displayName") + "!");
+        movePlayerChessPiece(this);
+        killEnemyChessPiece(this);
+
+        // check if player enemy general has been killed
+        if (selectedChessPieceColor === "red") {
+            checkForWin(redPlayer, bluePlayer);
+            //checkForCheckmate(redPlayer, bluePlayer);
         } else {
-            movePlayerChessPiece(this);
-            killEnemyChessPiece(this);
-
-            // check if player enemy general has been killed
-            if (selectedChessPieceColor === "red") {
-                checkForWin(redPlayer, bluePlayer);
-                checkForCheckmate(redPlayer, bluePlayer);
-            } else {
-                checkForWin(bluePlayer, redPlayer);
-                checkForCheckmate(bluePlayer, redPlayer);
-            }
-
-            // add  hover css effect on other chess pieces when the chess piece has been deselected
-            addHoverEffectForChessPieces(selectedChessPieceColor);
-
-            endPlayerTurn();
+            checkForWin(bluePlayer, redPlayer);
+            //checkForCheckmate(bluePlayer, redPlayer);
         }
+
+        // add  hover css effect on other chess pieces when the chess piece has been deselected
+        addHoverEffectForChessPieces(selectedChessPieceColor);
+
+        endPlayerTurn();
+
     } else {
         movePlayerChessPiece(this);
 
         if (selectedChessPieceColor === "red") {
-            checkForCheckmate(redPlayer, bluePlayer);
+            //checkForCheckmate(redPlayer, bluePlayer);
         } else {
-            checkForCheckmate(bluePlayer, redPlayer);
+            //checkForCheckmate(bluePlayer, redPlayer);
         }
 
         // add  hover css effect on other chess pieces when the chess piece has been deselected
@@ -465,6 +461,30 @@ var cellClickEvent = function (event) {
 
         endPlayerTurn();
     }
+}
+
+/*
+================================
+= helper function for elements =
+================================
+*/
+// get all possible move
+var getAllPossibleMoveByBlue = function () {
+    let possibleMoves = [];
+
+    for (let a = 0; a < playerChessBoard.length; a++) {
+        for (let b = 0; b < playerChessBoard[a].length; b++) {
+            if (playerChessBoard[a][b].color === "blue") {
+                possibleMoves.push(playerChessBoard[a][b].name);
+                playerChessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
+
+                    possibleMoves.push(possibleMove);
+                });
+            }
+        }
+    }
+
+    console.log(possibleMoves);
 }
 
 
