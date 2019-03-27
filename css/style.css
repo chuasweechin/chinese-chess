@@ -69,17 +69,21 @@ body {
 	text-align: center;
 }
 
+.redPlayerStats > .killed, .bluePlayerStats > .killed {
+	display: flex;
+}
+
 .redPlayerStats > .killed > img, .bluePlayerStats > .killed > img {
 	width: 25px;
 	height: 25px;
-	margin-left: 2px;
+	margin-left: 3px;
 }
 
-.redPlayer > .title {
+.redPlayer > .title, .redPlayer > .turn {
 	color: #CF4A3C;
 }
 
-.bluePlayer > .title {
+.bluePlayer > .title, .bluePlayer > .turn {
 	color: #005E92;
 }
 
@@ -91,16 +95,6 @@ body {
 	background-image: url("../img/blue-general.svg");
 }
 
-.redPlayer > .turn {
-	color: #CF4A3C;
-}
-
-.bluePlayer > .turn {
-	color: #005E92;
-}
-
-
-
 
 .chessBoard > table {
 	margin: auto;
@@ -109,31 +103,26 @@ body {
 	border-spacing: 3px;
 	background-size: cover;
 	background-repeat: no-repeat;
-	background-image: url("../img/chessboard-background.svg");
+	background-image: url("../img/background.svg");
 }
 
 .chessBoard > table > tr > td {
 	height: 52px;
 	min-width: 52px;
 	text-align: center;
-	border-radius: 50px;
-
+	border-radius: 5px;
 }
 
 .chessBoard > table > tr > td > img {
 	width: 49px;
-	vertical-align: top;
 	border-radius: 50%;
+	vertical-align: top;
 }
 
-.chessBoard > table > tr > td > .chessPiece:hover {
-	box-shadow: 0 0 5px 5px rgba(127, 145, 147, 0.9);
+.chessBoard > table > tr > td > .chessPiece[color="red"]:hover, .selected[color="red"] {
+	box-shadow: 0 0 3px 3px rgba(158, 0, 0, 0.4);
 }
 
-.selected {
-	box-shadow: 0 0 5px 5px rgba(127, 145, 147, 0.9);
-}
-
-.gameMessage {
-	font-size: 18px;
+.chessBoard > table > tr > td > .chessPiece[color="blue"]:hover, .selected[color="blue"]{
+	box-shadow: 0 0 3px 3px rgba(0, 94, 146, 0.4);
 }
