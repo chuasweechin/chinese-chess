@@ -24,7 +24,7 @@ body {
 	min-width: 200px;
 	max-width: 200px;
 	border-radius: 5px;
-	border: 1px solid grey;
+	border: 10px solid #8C8A88;
 	background-color: #F1F1F1;
 }
 
@@ -33,7 +33,6 @@ body {
 	font-weight: bold;
 	padding: 12px 0px;
 	text-align: center;
-	border-radius: 4px;
 	background-color: #DBD9D7;
 }
 
@@ -107,6 +106,7 @@ body {
 	border-radius: 4px;
 	border-spacing: 3px;
 	background-size: cover;
+	border: 2px solid grey;
 	background-repeat: no-repeat;
 	background-image: url("../img/background.svg");
 }
