@@ -148,7 +148,8 @@ var generateGame = function () {
         chessPieceElement.removeEventListener("click", chessPieceClickEvent);
     });
 
-    document.querySelector(".redPlayer > .turn").style.display = "block";
+    document.querySelector('.bluePlayer > .switch').addEventListener("click", buttonClickEvent);
+    document.querySelector(".redPlayer > .turn").style.visibility = "visible";
 
     updateScoreBoard();
 }
@@ -168,7 +169,7 @@ var endPlayerTurn = function () {
 
         redPlayer.turn = false;
         removeHoverEffectForChessPieces(redPlayer.color);
-        document.querySelector(".redPlayer > .turn").style.display = "none";
+        document.querySelector(".redPlayer > .turn").style.visibility = "hidden";
 
         // enable blue chess pieces once his turn is over
         document.querySelectorAll('tr > td > img[color="blue"]').forEach(function(chessPieceElement) {
@@ -177,7 +178,7 @@ var endPlayerTurn = function () {
 
         bluePlayer.turn = true;
         addHoverEffectForChessPieces(bluePlayer.color);
-        document.querySelector(".bluePlayer > .turn").style.display = "block";
+        document.querySelector(".bluePlayer > .turn").style.visibility = "visible";
 
         updateScoreBoard();
 
@@ -189,7 +190,7 @@ var endPlayerTurn = function () {
 
         bluePlayer.turn = false;
         removeHoverEffectForChessPieces(bluePlayer.color);
-        document.querySelector(".bluePlayer > .turn").style.display = "none";
+        document.querySelector(".bluePlayer > .turn").style.visibility = "hidden";
 
         // enable red chess pieces once his turn is over
         document.querySelectorAll('tr > td > img[color="red"]').forEach(function(chessPieceElement) {
@@ -198,7 +199,7 @@ var endPlayerTurn = function () {
 
         redPlayer.turn = true;
         addHoverEffectForChessPieces(redPlayer.color);
-        document.querySelector(".redPlayer > .turn").style.display = "block";
+        document.querySelector(".redPlayer > .turn").style.visibility = "visible";
 
         updateScoreBoard();
     }
@@ -444,8 +445,11 @@ var cellClickEvent = function (event) {
 
         // add  hover css effect on other chess pieces when the chess piece has been deselected
         addHoverEffectForChessPieces(selectedChessPieceColor);
-
         endPlayerTurn();
+
+        if (enableComputerPlayer === true) {
+            getAllPossibleMoveForComputerPlayer();
+        }
 
     } else {
         movePlayerChessPiece(this);
@@ -458,23 +462,56 @@ var cellClickEvent = function (event) {
 
         // add  hover css effect on other chess pieces when the chess piece has been deselected
         addHoverEffectForChessPieces(selectedChessPieceColor);
-
         endPlayerTurn();
+
+        if (enableComputerPlayer === true) {
+            getAllPossibleMoveForComputerPlayer();
+        }
+    }
+}
+
+// click event for selected chess piece to allow player to deselect
+var buttonClickEvent = function (event) {
+    let buttonElement = document.querySelector('.bluePlayer > .switch');
+    let nameElement = document.querySelector('.bluePlayer > .name');
+    let turnElement = document.querySelector('.bluePlayer > .turn');
+
+    if (buttonElement.value === "on") {
+        enableComputerPlayer = false;
+
+        buttonElement.value = "off";
+
+        buttonElement.innerHTML = "Turn On Computer Player";
+        nameElement.innerHTML = "Human Blue"
+        turnElement.innerHTML = "Your </br> Turn";
+
+        bluePlayer.name = "Human Blue";
+
+    } else if (buttonElement.value === "off") {
+        enableComputerPlayer = true;
+
+        buttonElement.value = "on";
+
+        buttonElement.innerHTML = "Turn Off Computer Player";
+        nameElement.innerHTML = "Computer Blue"
+        turnElement.innerHTML = "Computer Turn";
+
+        bluePlayer.name = "Computer Blue";
     }
 }
 
 /*
-================================
-= function for computer player  =
-================================
+======================================
+= function for computer blue player  =
+======================================
 */
 // get all possible move for computer player
-var getAllPossibleMoveForComputerPlayer = function (player) {
+var getAllPossibleMoveForComputerPlayer = function () {
     let possibleMoves = [];
 
     for (let a = 0; a < playerChessBoard.length; a++) {
         for (let b = 0; b < playerChessBoard[a].length; b++) {
-            if (playerChessBoard[a][b].color === player.color) {
+            if (playerChessBoard[a][b].color === "blue") {
                 playerChessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
                     possibleMove["id"] = playerChessBoard[a][b].id;
                     possibleMoves.push(possibleMove);
@@ -483,28 +520,19 @@ var getAllPossibleMoveForComputerPlayer = function (player) {
         }
     }
 
-    let randomlyPickOnePossibleMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
+    let randomMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)]
 
-    let chessPieceComputerPlayerPicked = document.querySelector('[id="' + randomlyPickOnePossibleMove.id + '"]');
-    chessPieceComputerPlayerPicked.click();
+    let chessPieceElement = document.querySelector('[id="' + randomMove.id + '"]');
 
-    let moveComputerPlayerPicked = document.querySelector('[yCoordinate="' + randomlyPickOnePossibleMove.possibleYCoordinate + '"][xCoordinate="' + randomlyPickOnePossibleMove.possibleXCoordinate + '"]');
+    let cellElement = document.querySelector('[yCoordinate="' + randomMove.possibleYCoordinate + '"][xCoordinate="' + randomMove.possibleXCoordinate + '"]');
 
-    moveComputerPlayerPicked.click();
-}
+    setTimeout(function() {
+        chessPieceElement.click();
+    }, 500);
 
-// get all possible move for computer player
-var runComputerPlayerVsComputerPlayer = function () {
-     for (let i = 1; i < 20; i++) {
-
-         setTimeout(function() {
-             getAllPossibleMoveByPlayer(redPlayer);
-         }, 2000 * i);
-
-         setTimeout(function() {
-             getAllPossibleMoveByPlayer(bluePlayer);
-         }, 2000 * i);
-    }
+    setTimeout(function() {
+        cellElement.click();
+    }, 3000);
 }
 
 /*
@@ -512,4 +540,6 @@ var runComputerPlayerVsComputerPlayer = function () {
 = main                         =
 ================================
 */
+
+let enableComputerPlayer = true;
 generateGame();

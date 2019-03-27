@@ -287,7 +287,7 @@ let imageFilePath = "img/";
 let selectedChessPieceElement = "";
 
 let redPlayer = {
-    name: "Red General",
+    name: "Human Red",
     color: "red",
     turn: true,
     win: 0,
@@ -521,7 +521,7 @@ let redPlayer = {
 }
 
 let bluePlayer = {
-    name: "Blue General",
+    name: "Computer Blue",
     color: "blue",
     turn: false,
     win: 0,
