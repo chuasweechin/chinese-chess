@@ -19,7 +19,6 @@ var generatePossibleMoveBasedOnMovePattern = function () {
             // make sure that the move is constraint within the chess board
             if (chessBoardBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
                 if (chessPieceName === "general") {
-                    //TODO: flying general
                     // make sure that the move is constraint within the camp
                     if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
                         // check for collision with other chess pieces
@@ -28,10 +27,59 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                             possibleXCoordinate: computedXCoordinate
                         });
 
+                        // check for flying general move
+                        if (index === 0) {
+                            let somethingInBetweenGeneral = false;
+                            let redGeneralYCoordinate, redGeneralXCoordinate;
+                            let blueGeneralYCoordinate, blueGeneralXCoordinate;
+
+                            // get the position of both general
+                            for (let a = 0; a < playerChessBoard.length; a++) {
+                                for (let b = 0; b < playerChessBoard[a].length; b++) {
+                                    let temp = playerChessBoard[a][b];
+
+                                    if (temp.name === "general" && temp.color === "red") {
+                                        redGeneralYCoordinate = temp.yCoordinate;
+                                        redGeneralXCoordinate = temp.xCoordinate;
+                                    } else if (temp.name === "general" && temp.color === "blue") {
+                                        blueGeneralYCoordinate = temp.yCoordinate;
+                                        blueGeneralXCoordinate = temp.xCoordinate;
+                                    }
+                                }
+                            }
+
+                            // check if both general are align vertically using X axis
+                            if (redGeneralXCoordinate === blueGeneralXCoordinate) {
+                                for (let i = blueGeneralYCoordinate + 1; i < redGeneralYCoordinate; i++) {
+                                    // check if there is something in between them if they are aligned
+                                    if (playerChessBoard[i][blueGeneralXCoordinate] !== "") {
+                                        somethingInBetweenGeneral = true;
+                                        break;
+                                    }
+                                }
+
+                                // add in the coordinates of the enemy general as a possible move
+                                if (somethingInBetweenGeneral === false) {
+                                    if (chessPieceColor === "red") {
+                                        possibleMoves.push({
+                                            possibleYCoordinate: blueGeneralYCoordinate,
+                                            possibleXCoordinate: blueGeneralXCoordinate
+                                        });
+                                    } else if (chessPieceColor === "blue") {
+                                         possibleMoves.push({
+                                            possibleYCoordinate: redGeneralYCoordinate,
+                                            possibleXCoordinate: redGeneralXCoordinate
+                                        });
+                                    }
+                                }
+                            }
+                        }
+
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                             break;
                         }
+
                     }
                 } else if (chessPieceName === "advisor") {
                     // make sure that the move is constraint within the camp

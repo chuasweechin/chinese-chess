@@ -263,8 +263,11 @@ var checkForCheckmate = function (attackingPlayer, defendingPlayer) {
 
     // check if the attacking player can win the game the next round based on all the possible move
     attackingPlayer.chessPieces.forEach(function(chessPiece) {
-        for (let i = 0; i < chessPiece.possibleMoves().length; i++) {
-            let possibleMove = chessPiece.possibleMoves()[i];
+
+        let temp = chessPiece.possibleMoves();
+
+        for (let i = 0; i < temp.length; i++) {
+            let possibleMove = temp[i];
 
             if (defendingPlayerGeneralYCoordinate === possibleMove.possibleYCoordinate
                 && defendingPlayerGeneralXCoordinate === possibleMove.possibleXCoordinate) {

@@ -1,6 +1,6 @@
 body {
 	margin: 0px;
-	background-color: #272522;
+	background-color: #312E2B;
 	font-family: 'Fondamento', cursive;
 }
 
@@ -12,7 +12,7 @@ body {
 }
 
 .container {
-	width: 78%;
+	width: 68%;
 	margin: auto;
 	display: flex;
 	justify-content: space-evenly;
