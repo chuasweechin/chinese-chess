@@ -154,9 +154,9 @@ var generateGame = function () {
 }
 
 /*
-================================
-= helper function for the game =
-================================
+=======================================
+= helper function to support the game =
+=======================================
 */
 // determine whose turn is it and disable the enemy chess pieces
 var endPlayerTurn = function () {
@@ -238,6 +238,50 @@ var checkForWin = function (attackingPlayer, defendingPlayer) {
 
             attackingPlayer.win += 1;
             defendingPlayer.lose += 1;
+
+            return true;
+        }
+    });
+
+    return false;
+}
+
+// alert player that he has been checkmate if the player general is in danger
+var checkForCheckmate = function (attackingPlayer, defendingPlayer) {
+    let defendingPlayerGeneralYCoordinate = "";
+    let defendingPlayerGeneralXCoordinate = "";
+
+    // get defending player general position
+    defendingPlayer.chessPieces.forEach(function(chessPiece) {
+        if (chessPiece.name === "general" && chessPiece.killed === false) {
+            defendingPlayerGeneralYCoordinate = chessPiece.yCoordinate;
+            defendingPlayerGeneralXCoordinate = chessPiece.xCoordinate;
+
+            chessPiece.checkmate = false;
+        }
+    });
+
+    // check if the attacking player can win the game the next round based on all the possible move
+    attackingPlayer.chessPieces.forEach(function(chessPiece) {
+        for (let i = 0; i < chessPiece.possibleMoves().length; i++) {
+            let possibleMove = chessPiece.possibleMoves()[i];
+
+            if (defendingPlayerGeneralYCoordinate === possibleMove.possibleYCoordinate
+                && defendingPlayerGeneralXCoordinate === possibleMove.possibleXCoordinate) {
+
+                    // set the checkmate flag for the defending player general
+                    defendingPlayer.chessPieces.forEach(function(chessPiece) {
+                        if (chessPiece.name === "general" && chessPiece.killed === false) {
+                            chessPiece.checkmate = true;
+                        }
+                    });
+
+                    setTimeout(function () {
+                        alert(defendingPlayer.name + ", you have been checkmate!");
+                    }, 250);
+
+                    break;
+            }
         }
     });
 }
@@ -393,8 +437,10 @@ var cellClickEvent = function (event) {
             // check if player enemy general has been killed
             if (selectedChessPieceColor === "red") {
                 checkForWin(redPlayer, bluePlayer);
+                checkForCheckmate(redPlayer, bluePlayer);
             } else {
                 checkForWin(bluePlayer, redPlayer);
+                checkForCheckmate(bluePlayer, redPlayer);
             }
 
             // add  hover css effect on other chess pieces when the chess piece has been deselected
@@ -403,10 +449,16 @@ var cellClickEvent = function (event) {
             endPlayerTurn();
         }
     } else {
-            movePlayerChessPiece(this);
+        movePlayerChessPiece(this);
 
-            // add  hover css effect on other chess pieces when the chess piece has been deselected
-            addHoverEffectForChessPieces(selectedChessPieceColor);
+        if (selectedChessPieceColor === "red") {
+            checkForCheckmate(redPlayer, bluePlayer);
+        } else {
+            checkForCheckmate(bluePlayer, redPlayer);
+        }
+
+        // add  hover css effect on other chess pieces when the chess piece has been deselected
+        addHoverEffectForChessPieces(selectedChessPieceColor);
 
         endPlayerTurn();
     }
@@ -419,10 +471,3 @@ var cellClickEvent = function (event) {
 ================================
 */
 generateGame();
-
-
-
-// checkmate alert and show in score board
-// flying general
-// play again button
-// timer feature

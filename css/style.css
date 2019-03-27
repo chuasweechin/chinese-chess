@@ -1,7 +1,7 @@
 body {
+	margin: 0px;
 	background-color: #272522;
-	font-family: 'Roboto', sans-serif;
-
+	font-family: 'Fondamento', cursive;
 }
 
 .header > h1 {
@@ -12,7 +12,7 @@ body {
 }
 
 .container {
-	width: 72%;
+	width: 78%;
 	margin: auto;
 	display: flex;
 	justify-content: space-evenly;
@@ -24,6 +24,7 @@ body {
 	min-width: 200px;
 	max-width: 200px;
 	border-radius: 5px;
+	border: 1px solid grey;
 	background-color: #F1F1F1;
 }
 
@@ -42,7 +43,7 @@ body {
 	text-align: center;
 }
 
-.redPlayerImage, .bluePlayerImage {
+.redPlayer > .image, .bluePlayer > .image {
 	width: 100px;
 	height: 100px;
 	border-radius: 50%;
@@ -51,9 +52,13 @@ body {
 	background-repeat: no-repeat;
 }
 
+.redPlayer > .checkmate {
+	position: absolute;
+}
+
 .redPlayerStats, .bluePlayerStats {
 	font-size: 14px;
-	margin-top: 30px;
+	margin-top: 20px;
 	text-align: center;
 }
 
@@ -87,11 +92,11 @@ body {
 	color: #005E92;
 }
 
-.redPlayerImage {
+.redPlayer > .image {
 	background-image: url("../img/red-general.svg");
 }
 
-.bluePlayerImage {
+.bluePlayer > .image {
 	background-image: url("../img/blue-general.svg");
 }
 
@@ -109,6 +114,7 @@ body {
 .chessBoard > table > tr > td {
 	height: 52px;
 	min-width: 52px;
+
 	text-align: center;
 	border-radius: 5px;
 }
@@ -125,4 +131,8 @@ body {
 
 .chessBoard > table > tr > td > .chessPiece[color="blue"]:hover, .selected[color="blue"]{
 	box-shadow: 0 0 3px 3px rgba(0, 94, 146, 0.4);
+}
+
+.checkmate {
+	background: red;
 }

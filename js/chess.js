@@ -219,7 +219,7 @@ let imageFilePath = "img/";
 let selectedChessPieceElement = "";
 
 let redPlayer = {
-    name: "Red Player",
+    name: "Red General",
     color: "red",
     turn: true,
     win: 0,
@@ -236,7 +236,8 @@ let redPlayer = {
         movePattern: [[-1,0], [0,1], [1,0], [0,-1]], // formula to compute possible move
         possibleMoves: generatePossibleMoveBasedOnMovePattern, // function to calculate move
         image: imageFilePath + "red-general.svg",
-        killed: false
+        killed: false,
+        checkmate: false
     },
     {
         id: "r-a-1",
@@ -436,7 +437,7 @@ let redPlayer = {
 }
 
 let bluePlayer = {
-    name: "Blue Player",
+    name: "Blue General",
     color: "blue",
     turn: false,
     win: 0,
@@ -453,7 +454,8 @@ let bluePlayer = {
         movePattern:[[-1,0], [0,1], [1,0], [0,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-general.svg",
-        killed: false
+        killed: false,
+        checkmate: false
     },
     {
         id: "b-a-1",
