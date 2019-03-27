@@ -305,7 +305,6 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern, // function to calculate move
         image: imageFilePath + "red-general.svg",
         killed: false,
-        checkmate: false,
         weightage: 900
     },
     {
@@ -539,7 +538,6 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-general.svg",
         killed: false,
-        checkmate: false,
         weightage: 900
     },
     {

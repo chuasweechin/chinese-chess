@@ -233,9 +233,16 @@ var checkForWin = function (attackingPlayer, defendingPlayer) {
             // disable the chess board since a player has been determined
             removeEventFromChessPieces();
 
-            setTimeout(function () {
-                alert(attackingPlayer.name + ", you have won the game!");
-            }, 250);
+            if (attackingPlayer.color === "red") {
+                setTimeout(function () {
+                    alert(attackingPlayer.name + ", you have won the game :)");
+                }, 250);
+            } else if (attackingPlayer.color === "blue"){
+                setTimeout(function () {
+                    alert(defendingPlayer.name + ", you have lose the game :(");
+                }, 250);
+            }
+
 
             attackingPlayer.win += 1;
             defendingPlayer.lose += 1;
@@ -258,35 +265,31 @@ var checkForCheckmate = function (attackingPlayer, defendingPlayer) {
             defendingPlayerGeneralYCoordinate = chessPiece.yCoordinate;
             defendingPlayerGeneralXCoordinate = chessPiece.xCoordinate;
 
-            chessPiece.checkmate = false;
         }
     });
 
     // check if the attacking player can win the game the next round based on all the possible move
     attackingPlayer.chessPieces.forEach(function(chessPiece) {
-
         let temp = chessPiece.possibleMoves();
 
-        for (let i = 0; i < temp.length; i++) {
-            let possibleMove = temp[i];
+        // there is no need to check for possible move for killed chess pieces
+        // it is not possible to checkmate using general
+        if (chessPiece.killed === false && chessPiece.name !== "general") {
+            for (let i = 0; i < temp.length; i++) {
+                let possibleMove = temp[i];
 
-            if (defendingPlayerGeneralYCoordinate === possibleMove.possibleYCoordinate
-                && defendingPlayerGeneralXCoordinate === possibleMove.possibleXCoordinate) {
+                if (defendingPlayerGeneralYCoordinate === possibleMove.possibleYCoordinate
+                    && defendingPlayerGeneralXCoordinate === possibleMove.possibleXCoordinate) {
 
-                    // set the checkmate flag for the defending player general
-                    defendingPlayer.chessPieces.forEach(function(chessPiece) {
-                        if (chessPiece.name === "general" && chessPiece.killed === false) {
-                            chessPiece.checkmate = true;
-                        }
-                    });
+                        setTimeout(function () {
+                            alert(defendingPlayer.name + ", you have been checkmate!");
+                        }, 250);
 
-                    setTimeout(function () {
-                        alert(defendingPlayer.name + ", you have been checkmate!");
-                    }, 250);
-
-                    break;
+                        break;
+                }
             }
         }
+
     });
 }
 
@@ -437,36 +440,33 @@ var cellClickEvent = function (event) {
         // check if player enemy general has been killed
         if (selectedChessPieceColor === "red") {
             checkForWin(redPlayer, bluePlayer);
-            //checkForCheckmate(redPlayer, bluePlayer);
-        } else {
+            checkForCheckmate(redPlayer, bluePlayer);
+        } else if (selectedChessPieceColor === "blue") {
             checkForWin(bluePlayer, redPlayer);
-            //checkForCheckmate(bluePlayer, redPlayer);
+            checkForCheckmate(bluePlayer, redPlayer);
         }
 
         // add  hover css effect on other chess pieces when the chess piece has been deselected
         addHoverEffectForChessPieces(selectedChessPieceColor);
         endPlayerTurn();
-
-        if (enableComputerPlayer === true) {
-            computerPlayerAction();
-        }
 
     } else {
         movePlayerChessPiece(this);
 
         if (selectedChessPieceColor === "red") {
-            //checkForCheckmate(redPlayer, bluePlayer);
-        } else {
-            //checkForCheckmate(bluePlayer, redPlayer);
+            checkForCheckmate(redPlayer, bluePlayer);
+        } else if (selectedChessPieceColor === "blue") {
+            checkForCheckmate(bluePlayer, redPlayer);
         }
 
         // add  hover css effect on other chess pieces when the chess piece has been deselected
         addHoverEffectForChessPieces(selectedChessPieceColor);
         endPlayerTurn();
 
-        if (enableComputerPlayer === true) {
-            computerPlayerAction();
-        }
+    }
+
+    if (enableComputerPlayer === true && bluePlayer.turn === true) {
+        computerPlayerAction();
     }
 }
 
@@ -513,18 +513,18 @@ var computerPlayerAction = function () {
     let xAxis = bestPossibleMove.possibleXCoordinate;
 
     setTimeout(function() {
-        ocument.querySelector('[id="' + bestPossibleMove.id + '"]').click();
+        document.querySelector('[id="' + bestPossibleMove.id + '"]').click();
     }, 500);
 
     setTimeout(function() {
         document.querySelector('[yCoordinate="' + yAxis + '"][xCoordinate="' + xAxis + '"]').click();
-    }, 2500);
+    }, 1000);
 }
 
 var calculateBestMoveForComputerPlayer = function () {
     let highestScore = 0;
     let bestPossibleMove = [];
-    let allPossibleMoves = getAllPossibleMoveForPlayer(bluePlayer);
+    let allPossibleMoves = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
 
     // compute the score for all the possible move snapshot
     for (let i = 0; i < allPossibleMoves.length; i++) {
@@ -534,13 +534,7 @@ var calculateBestMoveForComputerPlayer = function () {
         let possibleXMove = allPossibleMoves[i].possibleXCoordinate;
 
         // create a snapshot of current board
-        let snapshot = [ [],[],[],[],[],[],[],[],[],[] ];
-
-        for (let a = 0; a < playerChessBoard.length; a++) {
-            for (let b = 0; b < playerChessBoard[a].length; b++) {
-                snapshot[a].push(playerChessBoard[a][b]);
-            }
-        }
+        let snapshot = createSnapshot(playerChessBoard);
 
         // find the chess piece that will be moved based on the possible move
         for (let a = 0; a < snapshot.length; a++) {
@@ -561,6 +555,11 @@ var calculateBestMoveForComputerPlayer = function () {
 
     // find the possible move with the highest score
     for (let i = 0; i < allPossibleMoves.length; i++) {
+        // this is to prevent 0 being a bigger number than negative value in the array
+        if (i === 0) {
+            highestScore = allPossibleMoves[i].score;
+        }
+
         if (allPossibleMoves[i].score >= highestScore) {
             highestScore = allPossibleMoves[i].score;
         }
@@ -577,17 +576,17 @@ var calculateBestMoveForComputerPlayer = function () {
     return bestPossibleMove;
 }
 
-var getAllPossibleMoveForPlayer = function (player) {
+var getAllPossibleMoveForPlayer = function (player, chessboard) {
     let possibleMoves = [];
 
-    for (let a = 0; a < playerChessBoard.length; a++) {
-        for (let b = 0; b < playerChessBoard[a].length; b++) {
-            if (playerChessBoard[a][b].color === player.color) {
-                playerChessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
-                    possibleMove["id"] = playerChessBoard[a][b].id;
-                    possibleMove["name"] = playerChessBoard[a][b].name;
-                    possibleMove["originalYCoordinate"] = playerChessBoard[a][b].yCoordinate;
-                    possibleMove["originalXCoordinate"] = playerChessBoard[a][b].xCoordinate;
+    for (let a = 0; a < chessboard.length; a++) {
+        for (let b = 0; b < chessboard[a].length; b++) {
+            if (chessboard[a][b].color === player.color) {
+                chessboard[a][b].possibleMoves().forEach(function(possibleMove) {
+                    possibleMove["id"] = chessboard[a][b].id;
+                    possibleMove["name"] = chessboard[a][b].name;
+                    possibleMove["originalYCoordinate"] = chessboard[a][b].yCoordinate;
+                    possibleMove["originalXCoordinate"] = chessboard[a][b].xCoordinate;
 
                     possibleMoves.push(possibleMove);
                 });
@@ -614,6 +613,18 @@ var evaluateBoardScore = function (chessBoard, player) {
         }
     }
     return score;
+}
+
+var createSnapshot = function (chessBoard) {
+     let snapshot = [ [],[],[],[],[],[],[],[],[],[] ];
+
+    for (let a = 0; a < chessBoard.length; a++) {
+        for (let b = 0; b < chessBoard[a].length; b++) {
+            snapshot[a].push(chessBoard[a][b]);
+        }
+    }
+
+    return snapshot;
 }
 
 /*
