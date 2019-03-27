@@ -249,6 +249,7 @@ var checkForWin = function (attackingPlayer, defendingPlayer) {
 
             attackingPlayer.win += 1;
             defendingPlayer.lose += 1;
+            updateScoreBoard();
 
             return true;
         }
