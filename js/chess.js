@@ -553,7 +553,8 @@ let bluePlayer = {
         movePattern:[[-1,-1], [-1,1], [1,1], [1,-1]],
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-advisor.svg",
-        killed: false
+        killed: false,
+        weightage: 20
     },
     {
         id: "b-a-2",
@@ -581,7 +582,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
         killed: false,
-        weightage: 20
+        weightage: 30
     },
     {
         id: "b-e-2",
