@@ -72,11 +72,13 @@ body {
 
 .redPlayerStats > .killed, .bluePlayerStats > .killed {
 	display: flex;
+	flex-wrap: wrap;
 }
 
 .redPlayerStats > .killed > img, .bluePlayerStats > .killed > img {
 	width: 25px;
 	height: 25px;
+	margin-top: 3px;
 	margin-left: 3px;
 }
 

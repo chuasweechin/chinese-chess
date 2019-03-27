@@ -69,7 +69,6 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                                             possibleXCoordinate: blueGeneralXCoordinate
                                         });
                                     } else if (chessPieceColor === "blue") {
-                                        console.log("here");
                                          possibleMoves.push({
                                             possibleYCoordinate: redGeneralYCoordinate,
                                             possibleXCoordinate: redGeneralXCoordinate
@@ -91,6 +90,8 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                 } else if (chessPieceName === "advisor") {
                     // make sure that the move is constraint within the camp
                     if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
+
+                        // disable move that attack player own piece
                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
                             possibleMoves.push({
                                 possibleYCoordinate: computedYCoordinate,
@@ -110,6 +111,8 @@ var generatePossibleMoveBasedOnMovePattern = function () {
 
                     // make sure that the move is constraint within the camp
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
+
+                        // disable move that attack player own piece
                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
                             possibleMoves.push({
                                 possibleYCoordinate: computedYCoordinate,
@@ -117,21 +120,24 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                             });
                         }
 
+                        // remove the possible move if block move is detected
+                        if (playerChessBoard[blockYCoordinate][blockXCoordinate] !== "") {
+                            possibleMoves.pop();
+                            break;
+                        }
+
                         // break the loop if a collision is detected
                         if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                             break;
                         }
 
-                        // remove the possible move if block move is detected
-                        if (playerChessBoard[blockYCoordinate][blockXCoordinate] !== "") {
-                            possibleMoves.pop();
-                        }
                     }
                 } else if (chessPieceName === "horse") {
                     // get the coordinates that block movement for horse
                     let blockYCoordinate = chessPieceYCoordinate + pattern[2];
                     let blockXCoordinate = chessPieceXCoordinate + pattern[3];
 
+                    // disable move that attack player own piece
                     if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
                         possibleMoves.push({
                             possibleYCoordinate: computedYCoordinate,
@@ -139,15 +145,18 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         });
                     }
 
+                    // remove the possible move if block move is detected
+                    if (playerChessBoard[blockYCoordinate][blockXCoordinate] !== "") {
+                        possibleMoves.pop();
+                        break;
+                    }
+
                     // break the loop if a collision is detected
                     if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                         break;
                     }
 
-                    // remove the possible move if block move is detected
-                    if (playerChessBoard[blockYCoordinate][blockXCoordinate] !== "") {
-                        possibleMoves.pop();
-                    }
+
                 } else if (chessPieceName === "chariot") {
 
                         // disable move that attack player own piece
@@ -163,6 +172,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                             break;
                         }
                 } else if (chessPieceName === "cannon") {
+                        // disable move that attack player own piece
                         if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
                             possibleMoves.push({
                                 possibleYCoordinate: computedYCoordinate,
@@ -188,6 +198,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                 } else if (chessPieceName === "soldier") {
                     // if the soldier is in enemy land, allow all move for solder
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === false) {
+                        // disable move that attack player own piece
                         if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
                             possibleMoves.push({
                                 possibleYCoordinate: computedYCoordinate,

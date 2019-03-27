@@ -229,20 +229,23 @@ var movePlayerChessPiece = function (cellElement) {
 var checkForWin = function (attackingPlayer, defendingPlayer) {
     defendingPlayer.chessPieces.forEach (function (chessPiece) {
         if (chessPiece.name === "general" && chessPiece.killed === true) {
-
             // disable the chess board since a player has been determined
             removeEventFromChessPieces();
 
+
             if (attackingPlayer.color === "red") {
+                removeHoverEffectForChessPieces(defendingPlayer.color);
+
                 setTimeout(function () {
                     alert(attackingPlayer.name + ", you have won the game :)");
                 }, 250);
-            } else if (attackingPlayer.color === "blue"){
+            } else if (attackingPlayer.color === "blue") {
+                removeHoverEffectForChessPieces(defendingPlayer.color);
+
                 setTimeout(function () {
                     alert(defendingPlayer.name + ", you have lose the game :(");
                 }, 250);
             }
-
 
             attackingPlayer.win += 1;
             defendingPlayer.lose += 1;
@@ -264,7 +267,6 @@ var checkForCheckmate = function (attackingPlayer, defendingPlayer) {
         if (chessPiece.name === "general" && chessPiece.killed === false) {
             defendingPlayerGeneralYCoordinate = chessPiece.yCoordinate;
             defendingPlayerGeneralXCoordinate = chessPiece.xCoordinate;
-
         }
     });
 
@@ -437,6 +439,10 @@ var cellClickEvent = function (event) {
         movePlayerChessPiece(this);
         killEnemyChessPiece(this);
 
+        // add  hover css effect on other chess pieces when the chess piece has been deselected
+        addHoverEffectForChessPieces(selectedChessPieceColor);
+        endPlayerTurn();
+
         // check if player enemy general has been killed
         if (selectedChessPieceColor === "red") {
             checkForWin(redPlayer, bluePlayer);
@@ -445,24 +451,18 @@ var cellClickEvent = function (event) {
             checkForWin(bluePlayer, redPlayer);
             checkForCheckmate(bluePlayer, redPlayer);
         }
+    } else {
+        movePlayerChessPiece(this);
 
         // add  hover css effect on other chess pieces when the chess piece has been deselected
         addHoverEffectForChessPieces(selectedChessPieceColor);
         endPlayerTurn();
-
-    } else {
-        movePlayerChessPiece(this);
 
         if (selectedChessPieceColor === "red") {
             checkForCheckmate(redPlayer, bluePlayer);
         } else if (selectedChessPieceColor === "blue") {
             checkForCheckmate(bluePlayer, redPlayer);
         }
-
-        // add  hover css effect on other chess pieces when the chess piece has been deselected
-        addHoverEffectForChessPieces(selectedChessPieceColor);
-        endPlayerTurn();
-
     }
 
     if (enableComputerPlayer === true && bluePlayer.turn === true) {
@@ -507,7 +507,7 @@ var buttonClickEvent = function (event) {
 */
 // get all possible move for computer player
 var computerPlayerAction = function () {
-    let bestPossibleMove = calculateBestMoveForComputerPlayer();
+    let bestPossibleMove = calculateBestMoveForComputerPlayer(playerChessBoard);
 
     let yAxis = bestPossibleMove.possibleYCoordinate;
     let xAxis = bestPossibleMove.possibleXCoordinate;
@@ -521,7 +521,7 @@ var computerPlayerAction = function () {
     }, 1000);
 }
 
-var calculateBestMoveForComputerPlayer = function () {
+var calculateBestMoveForComputerPlayer = function (chessBoard) {
     let highestScore = 0;
     let bestPossibleMove = [];
     let allPossibleMoves = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
@@ -534,7 +534,7 @@ var calculateBestMoveForComputerPlayer = function () {
         let possibleXMove = allPossibleMoves[i].possibleXCoordinate;
 
         // create a snapshot of current board
-        let snapshot = createSnapshot(playerChessBoard);
+        let snapshot = createSnapshot(chessBoard);
 
         // find the chess piece that will be moved based on the possible move
         for (let a = 0; a < snapshot.length; a++) {
@@ -550,7 +550,7 @@ var calculateBestMoveForComputerPlayer = function () {
         snapshot[possibleYMove][possibleXMove] = chessPieceToBeMoved;
 
         // tag the scoring for each possible move
-        allPossibleMoves[i]["score"] = evaluateBoardScore(snapshot, bluePlayer);
+        allPossibleMoves[i]["score"] = evaluateBoardScore(bluePlayer, snapshot);
     }
 
     // find the possible move with the highest score
@@ -576,17 +576,17 @@ var calculateBestMoveForComputerPlayer = function () {
     return bestPossibleMove;
 }
 
-var getAllPossibleMoveForPlayer = function (player, chessboard) {
+var getAllPossibleMoveForPlayer = function (player, chessBoard) {
     let possibleMoves = [];
 
-    for (let a = 0; a < chessboard.length; a++) {
-        for (let b = 0; b < chessboard[a].length; b++) {
-            if (chessboard[a][b].color === player.color) {
-                chessboard[a][b].possibleMoves().forEach(function(possibleMove) {
-                    possibleMove["id"] = chessboard[a][b].id;
-                    possibleMove["name"] = chessboard[a][b].name;
-                    possibleMove["originalYCoordinate"] = chessboard[a][b].yCoordinate;
-                    possibleMove["originalXCoordinate"] = chessboard[a][b].xCoordinate;
+    for (let a = 0; a < chessBoard.length; a++) {
+        for (let b = 0; b < chessBoard[a].length; b++) {
+            if (chessBoard[a][b].color === player.color) {
+                chessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
+                    possibleMove["id"] = chessBoard[a][b].id;
+                    possibleMove["name"] = chessBoard[a][b].name;
+                    possibleMove["originalYCoordinate"] = chessBoard[a][b].yCoordinate;
+                    possibleMove["originalXCoordinate"] = chessBoard[a][b].xCoordinate;
 
                     possibleMoves.push(possibleMove);
                 });
@@ -597,7 +597,7 @@ var getAllPossibleMoveForPlayer = function (player, chessboard) {
     return possibleMoves;
 }
 
-var evaluateBoardScore = function (chessBoard, player) {
+var evaluateBoardScore = function (player, chessBoard) {
     let score = 0;
 
     for (let a = 0; a < chessBoard.length; a++) {
