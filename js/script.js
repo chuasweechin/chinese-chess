@@ -519,11 +519,12 @@ var computerPlayerAction = function () {
 
     setTimeout(function() {
         document.querySelector('[yCoordinate="' + yAxis + '"][xCoordinate="' + xAxis + '"]').click();
-    }, 1000);
+    }, 3000);
 }
 
 var calculateBestMoveForComputerPlayer = function (chessBoard) {
     let highestScore = 0;
+    let chessPieceToBeMoved;
     let bestPossibleMove = [];
     let allPossibleMoves = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
 
@@ -541,7 +542,7 @@ var calculateBestMoveForComputerPlayer = function (chessBoard) {
         for (let a = 0; a < snapshot.length; a++) {
             for (let b = 0; b < snapshot[a].length; b++) {
                 if (snapshot[a][b].id === possibleMoveChessPieceId) {
-                    chessPieceToBeMoved = snapshot[a][b];
+                    chessPieceToBeMoved  = snapshot[a][b];
                 }
             }
         }
@@ -597,6 +598,60 @@ var getAllPossibleMoveForPlayer = function (player, chessBoard) {
 
     return possibleMoves;
 }
+
+var getAllPossibleSnapshotAndMoveForPlayer = function (player, chessBoard) {
+    let possibleSnapshotAndMoves = [];
+
+    // get all the chess pieces of the player
+    for (let a = 0; a < chessBoard.length; a++) {
+        for (let b = 0; b < chessBoard[a].length; b++) {
+
+            // filter by color
+            if (chessBoard[a][b].color === player.color) {
+
+                // find all possible move set for each chess piece
+                chessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
+                    let temp = {};
+                    let chessPieceToBeMoved;
+
+                    // get the identify chess piece
+                    temp["id"] = chessBoard[a][b].id;
+                    temp["name"] = chessBoard[a][b].name;
+                    temp["originalYCoordinate"] = chessBoard[a][b].yCoordinate;
+                    temp["originalXCoordinate"] = chessBoard[a][b].xCoordinate;
+
+                    // get the possible move stats of the identify chess piece
+                    let possibleYMove = possibleMove.possibleYCoordinate;
+                    let possibleXMove = possibleMove.possibleXCoordinate;
+                    temp["newYCoordinate"] = possibleMove.possibleYCoordinate;
+                    temp["newXCoordinate"] = possibleMove.possibleXCoordinate;
+
+                    let snapshot = createSnapshot(chessBoard);
+
+                    // find the chess piece that will be moved based on the possible move
+                    for (let a = 0; a < snapshot.length; a++) {
+                        for (let b = 0; b < snapshot[a].length; b++) {
+                            if (snapshot[a][b].id === chessBoard[a][b].id) {
+                                chessPieceToBeMoved = snapshot[a][b];
+                            }
+                        }
+                    }
+
+                    // remove the chess piece from the original position and put it into the identify possible move
+                    snapshot[chessPieceToBeMoved.yCoordinate][chessPieceToBeMoved.xCoordinate] = "";
+                    snapshot[possibleYMove][possibleXMove] = chessPieceToBeMoved;
+
+                    temp["chessBoardImplementedWithPossibleMove"] = snapshot;
+
+                    possibleSnapshotAndMoves.push(temp);
+                });
+            }
+        }
+    }
+
+    return possibleSnapshotAndMoves;
+}
+
 
 var evaluateBoardScore = function (player, chessBoard) {
     let score = 0;

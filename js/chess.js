@@ -155,10 +155,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                     if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                         break;
                     }
-
-
                 } else if (chessPieceName === "chariot") {
-
                         // disable move that attack player own piece
                         if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
                             possibleMoves.push({
@@ -172,29 +169,32 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                             break;
                         }
                 } else if (chessPieceName === "cannon") {
+                    possibleMoves.push({
+                        possibleYCoordinate: computedYCoordinate,
+                        possibleXCoordinate: computedXCoordinate
+                    });
+
+                    if (chessPieceColor === playerChessBoard[computedYCoordinate][computedXCoordinate].color
+                        && playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                        && somethingInBetweenCannon === true) {
                         // disable move that attack player own piece
-                        if (chessPieceColor !== playerChessBoard[computedYCoordinate][computedXCoordinate].color || playerChessBoard[computedYCoordinate][computedXCoordinate] === "") {
-                            possibleMoves.push({
-                                possibleYCoordinate: computedYCoordinate,
-                                possibleXCoordinate: computedXCoordinate
-                            });
-                        }
+                        possibleMoves.pop();
 
-                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
-                            && somethingInBetweenCannon === false) {
-                            // remove the in between chess piece as this cannot be attacked
-                            possibleMoves.pop();
-                            somethingInBetweenCannon = true;
+                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                        && somethingInBetweenCannon === false) {
+                        // remove the in between chess piece as this cannot be attacked
+                        possibleMoves.pop();
+                        somethingInBetweenCannon = true;
 
-                        } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] === ""
-                            && somethingInBetweenCannon === true) {
-                            //remove the empty spaces from the move zone as this is not allowed
-                            possibleMoves.pop();
+                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] === ""
+                        && somethingInBetweenCannon === true) {
+                        //remove the empty spaces from the move zone as this is not allowed
+                        possibleMoves.pop();
 
-                        } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
-                            && somethingInBetweenCannon === true) {
-                            break;
-                        }
+                    } else if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== ""
+                        && somethingInBetweenCannon === true) {
+                        break;
+                    }
                 } else if (chessPieceName === "soldier") {
                     // if the soldier is in enemy land, allow all move for solder
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === false) {
