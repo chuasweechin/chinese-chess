@@ -510,8 +510,8 @@ var buttonClickEvent = function (event) {
 var computerPlayerAction = function () {
     let bestPossibleMove = calculateBestMoveForComputerPlayerV1(playerChessBoard);
 
-    let yAxis = bestPossibleMove.possibleYCoordinate;
-    let xAxis = bestPossibleMove.possibleXCoordinate;
+    let yAxis = bestPossibleMove.newYCoordinate;
+    let xAxis = bestPossibleMove.newXCoordinate;
 
     setTimeout(function() {
         document.querySelector('[id="' + bestPossibleMove.id + '"]').click();
@@ -519,102 +519,37 @@ var computerPlayerAction = function () {
 
     setTimeout(function() {
         document.querySelector('[yCoordinate="' + yAxis + '"][xCoordinate="' + xAxis + '"]').click();
-    }, 3000);
+    }, 1000);
 }
 
 var calculateBestMoveForComputerPlayerV1 = function (chessBoard) {
     let highestScore = 0;
-    let chessPieceToBeMoved;
     let bestPossibleMove = [];
-    let allPossibleMoves = getAllPossibleMoveForPlayerV1(bluePlayer, playerChessBoard);
 
-    // compute the score for all the possible move snapshot
-    for (let i = 0; i < allPossibleMoves.length; i++) {
-        let possibleMoveChessPiece;
-        let possibleMoveChessPieceId = allPossibleMoves[i].id;
-        let possibleYMove = allPossibleMoves[i].possibleYCoordinate;
-        let possibleXMove = allPossibleMoves[i].possibleXCoordinate;
-
-        // create a snapshot of current board
-        let snapshot = createSnapshot(chessBoard);
-
-        // find the chess piece that will be moved based on the possible move
-        for (let a = 0; a < snapshot.length; a++) {
-            for (let b = 0; b < snapshot[a].length; b++) {
-                if (snapshot[a][b].id === possibleMoveChessPieceId) {
-                    chessPieceToBeMoved  = snapshot[a][b];
-                }
-            }
-        }
-
-        // remove the chess piece from the original position and put it into the identify possible move
-        snapshot[chessPieceToBeMoved.yCoordinate][chessPieceToBeMoved.xCoordinate] = "";
-        snapshot[possibleYMove][possibleXMove] = chessPieceToBeMoved;
-
-        // tag the scoring for each possible move
-        allPossibleMoves[i]["score"] = evaluateBoardScoreV1(bluePlayer, snapshot);
-    }
+    let possibleMovesForBlue = getAllPossibleMoveForPlayerV2(bluePlayer, playerChessBoard);
+    possibleMovesForBlue = evaluateBoardScoreV2(possibleMovesForBlue);
 
     // find the possible move with the highest score
-    for (let i = 0; i < allPossibleMoves.length; i++) {
+    for (let i = 0; i < possibleMovesForBlue.length; i++) {
         // this is to prevent 0 being a bigger number than negative value in the array
         if (i === 0) {
-            highestScore = allPossibleMoves[i].score;
+            highestScore = possibleMovesForBlue[i].score;
         }
 
-        if (allPossibleMoves[i].score >= highestScore) {
-            highestScore = allPossibleMoves[i].score;
+        if (possibleMovesForBlue[i].score >= highestScore) {
+            highestScore = possibleMovesForBlue[i].score;
         }
     }
 
     // pick one of the possible move with the highest score. It does not matter which so long as it is the highest
-    for (let i = 0; i < allPossibleMoves.length; i++) {
-        if (allPossibleMoves[i].score === highestScore) {
-            bestPossibleMove = allPossibleMoves[i];
+    for (let i = 0; i < possibleMovesForBlue.length; i++) {
+        if (possibleMovesForBlue[i].score === highestScore) {
+            bestPossibleMove = possibleMovesForBlue[i];
             break;
         }
     }
 
     return bestPossibleMove;
-}
-
-var getAllPossibleMoveForPlayerV1 = function (player, chessBoard) {
-    let possibleMoves = [];
-
-    for (let a = 0; a < chessBoard.length; a++) {
-        for (let b = 0; b < chessBoard[a].length; b++) {
-            if (chessBoard[a][b].color === player.color) {
-                chessBoard[a][b].possibleMoves(playerChessBoard).forEach(function(possibleMove) {
-                    possibleMove["id"] = chessBoard[a][b].id;
-                    possibleMove["name"] = chessBoard[a][b].name;
-                    possibleMove["originalYCoordinate"] = chessBoard[a][b].yCoordinate;
-                    possibleMove["originalXCoordinate"] = chessBoard[a][b].xCoordinate;
-
-                    possibleMoves.push(possibleMove);
-                });
-            }
-        }
-    }
-
-    return possibleMoves;
-}
-
-var evaluateBoardScoreV1 = function (player, chessBoard) {
-    let score = 0;
-
-    for (let a = 0; a < chessBoard.length; a++) {
-        for (let b = 0; b < chessBoard[a].length; b++) {
-            if (chessBoard[a][b] !== "") {
-                if (chessBoard[a][b].color === player.color) {
-                    score += chessBoard[a][b].weightage;
-                } else {
-                    // minus score for human player chess pieces
-                    score -= chessBoard[a][b].weightage;
-                }
-            }
-        }
-    }
-    return score;
 }
 
 var createSnapshot = function (chessBoard) {
