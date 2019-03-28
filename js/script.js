@@ -221,7 +221,6 @@ var movePlayerChessPiece = function (cellElement) {
 
     //addEventForChessPieces(this);
     removeEventFromCells();
-
     selectedChessPieceElement = null;
 }
 
@@ -232,13 +231,13 @@ var checkForWin = function (attackingPlayer, defendingPlayer) {
             // disable the chess board since a player has been determined
             removeEventFromChessPieces();
 
-
             if (attackingPlayer.color === "red") {
                 removeHoverEffectForChessPieces(defendingPlayer.color);
 
                 setTimeout(function () {
                     alert(attackingPlayer.name + ", you have won the game :)");
                 }, 250);
+
             } else if (attackingPlayer.color === "blue") {
                 removeHoverEffectForChessPieces(defendingPlayer.color);
 
@@ -697,7 +696,27 @@ var evaluateBoardScoreV2 = function (allPossibleMoves) {
         possibleMove["score"] = score;
     });
 
-    return items;
+    return allPossibleMoves;
+}
+
+// depth level 1
+var minimax = function () {
+    let temp = [];
+
+    let possibleMovesForBlue = getAllPossibleMoveForPlayerV2(bluePlayer, playerChessBoard);
+    possibleMovesForBlue = evaluateBoardScoreV2(possibleMovesForBlue);
+
+    possibleMovesForBlue.forEach(function(possiblesMoveForBlue) {
+        let possibleMoveForBlueThenRed = getAllPossibleMoveForPlayerV2(redPlayer, possiblesMoveForBlue.updatedChessBoard);
+        possibleMoveForBlueThenRed = evaluateBoardScoreV2(possibleMoveForBlueThenRed);
+
+        // put in the previous move for analysis
+        possibleMoveForBlueThenRed["previous"] = possiblesMoveForBlue;
+        temp.push(possibleMoveForBlueThenRed);
+    });
+
+    return temp;
+
 }
 
 /*
