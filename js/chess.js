@@ -1,4 +1,4 @@
-var generatePossibleMoveBasedOnMovePattern = function () {
+var generatePossibleMoveBasedOnMovePattern = function (chessBoard) {
     let possibleMoves = [];
     let flyingGeneralCheck = false;
 
@@ -18,7 +18,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
             let computedXCoordinate = chessPieceXCoordinate + xCoordinatePattern * d;
 
             if (chessBoardBoundaryCheck(computedYCoordinate, computedXCoordinate) === true) {
-                let destinationPosition = playerChessBoard[computedYCoordinate][computedXCoordinate];
+                let destinationPosition = chessBoard[computedYCoordinate][computedXCoordinate];
 
                 if (chessPieceName === "general") {
                     if (campBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
@@ -32,7 +32,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         // check for flying general move, this is to be done only once
                         if (flyingGeneralCheck === false) {
                             flyingGeneralCheck = true;
-                            possibleMoves = flyingGeneralMoveCheck(chessPieceColor, possibleMoves);
+                            possibleMoves = flyingGeneralMoveCheck(chessBoard, chessPieceColor, possibleMoves);
                         }
 
                         // break the loop if a collision is detected
@@ -61,7 +61,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
 
                 if (chessPieceName === "elephant") {
                     if (landBoundaryCheck(computedYCoordinate, computedXCoordinate, chessPieceColor) === true) {
-                        if (moveBlockCheck(pattern, chessPieceYCoordinate, chessPieceXCoordinate) === true) {
+                        if (moveBlockCheck(chessBoard, pattern, chessPieceYCoordinate, chessPieceXCoordinate) === true) {
                             break;
                         } else if (friendlyFireCheck(chessPieceColor, destinationPosition.color) === false) {
                             possibleMoves.push({
@@ -78,7 +78,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                 }
 
                 if (chessPieceName === "horse") {
-                    if (moveBlockCheck(pattern, chessPieceYCoordinate, chessPieceXCoordinate) === true) {
+                    if (moveBlockCheck(chessBoard, pattern, chessPieceYCoordinate, chessPieceXCoordinate) === true) {
                         break;
                     } else if (friendlyFireCheck(chessPieceColor, destinationPosition.color) === false) {
                         possibleMoves.push({
@@ -141,7 +141,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         }
 
                         // break the loop if a collision is detected
-                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                        if (chessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                             break;
                         }
                     }
@@ -153,7 +153,7 @@ var generatePossibleMoveBasedOnMovePattern = function () {
                         });
 
                         // break the loop if a collision is detected
-                        if (playerChessBoard[computedYCoordinate][computedXCoordinate] !== "") {
+                        if (chessBoard[computedYCoordinate][computedXCoordinate] !== "") {
                             break;
                         }
                     }
@@ -228,11 +228,11 @@ var landBoundaryCheck = function (computedYCoordinate, computedXCoordinate, ches
 }
 
 // this function is to check if movement has been blocked for horse and elephant
-var moveBlockCheck= function (pattern, chessPieceYCoordinate, chessPieceXCoordinate) {
+var moveBlockCheck= function (chessBoard, pattern, chessPieceYCoordinate, chessPieceXCoordinate) {
     let blockYCoordinate = chessPieceYCoordinate + pattern[2];
     let blockXCoordinate = chessPieceXCoordinate + pattern[3];
 
-    if (playerChessBoard[blockYCoordinate][blockXCoordinate] === "") {
+    if (chessBoard[blockYCoordinate][blockXCoordinate] === "") {
         return false;
     } else {
         return true;
@@ -247,15 +247,16 @@ var friendlyFireCheck= function (selectedChessPieceColor, destinationPositionCol
     }
 }
 
-var flyingGeneralMoveCheck = function (chessPieceColor, possibleMoves) {
+// this function is to check if the flying general move had been activated
+var flyingGeneralMoveCheck = function (chessBoard, chessPieceColor, possibleMoves) {
     let somethingInBetweenGeneral = false;
     let redGeneralYCoordinate, redGeneralXCoordinate;
     let blueGeneralYCoordinate, blueGeneralXCoordinate;
 
     // get the position of both general
-    for (let a = 0; a < playerChessBoard.length; a++) {
-        for (let b = 0; b < playerChessBoard[a].length; b++) {
-            let temp = playerChessBoard[a][b];
+    for (let a = 0; a < chessBoard.length; a++) {
+        for (let b = 0; b < chessBoard[a].length; b++) {
+            let temp = chessBoard[a][b];
 
             if (temp.name === "general" && temp.color === "red") {
                 redGeneralYCoordinate = temp.yCoordinate;

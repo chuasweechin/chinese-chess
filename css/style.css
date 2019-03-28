@@ -99,12 +99,11 @@ body {
 }
 
 .bluePlayer > .switch {
+	bottom: 50px;
+	width: 150px;
 	margin-left: 26px;
 	position: absolute;
-	bottom: 50px;
 }
-
-
 
 .chessBoard > table {
 	margin: auto;

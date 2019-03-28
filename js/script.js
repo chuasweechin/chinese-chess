@@ -58,7 +58,6 @@ var placeChessPiecesAtStartingPosition = function (player) {
         imgElement.setAttribute("displayName", chessPiece.displayName);
         imgElement.setAttribute("src", chessPiece.image);
         imgElement.setAttribute("color", chessPiece.color);
-
         imgElement.addEventListener("click", chessPieceClickEvent);
 
         cellElement.appendChild(imgElement);
@@ -69,6 +68,9 @@ var placeChessPiecesAtStartingPosition = function (player) {
 }
 
 var createScoreBoard = function () {
+    let redPlayerStatsElement = document.querySelector(".redPlayerStats");
+    let bluePlayerStatsElement = document.querySelector(".bluePlayerStats");
+
     // create score board for red
     let redDivWinStatslement = document.createElement("div");
     let redDivLoseStatslement = document.createElement("div");
@@ -80,10 +82,10 @@ var createScoreBoard = function () {
     redDivKilledLabelElement.className = "killedLabel";
     redDivKilledElement.className = "killed";
 
-    document.querySelector(".redPlayerStats").appendChild(redDivWinStatslement);
-    document.querySelector(".redPlayerStats").appendChild(redDivLoseStatslement);
-    document.querySelector(".redPlayerStats").appendChild(redDivKilledLabelElement);
-    document.querySelector(".redPlayerStats").appendChild(redDivKilledElement);
+    redPlayerStatsElement.appendChild(redDivWinStatslement);
+    redPlayerStatsElement.appendChild(redDivLoseStatslement);
+    redPlayerStatsElement.appendChild(redDivKilledLabelElement);
+    redPlayerStatsElement.appendChild(redDivKilledElement);
 
     // create score board for blue
     let blueDivWinStatslement = document.createElement("div");
@@ -96,10 +98,10 @@ var createScoreBoard = function () {
     blueDivKilledLabelElement.className = "killedLabel";
     blueDivKilledElement.className = "killed";
 
-    document.querySelector(".bluePlayerStats").appendChild(blueDivWinStatslement);
-    document.querySelector(".bluePlayerStats").appendChild(blueDivLoseStatslement);
-    document.querySelector(".bluePlayerStats").appendChild(blueDivKilledLabelElement);
-    document.querySelector(".bluePlayerStats").appendChild(blueDivKilledElement);
+    bluePlayerStatsElement.appendChild(blueDivWinStatslement);
+    bluePlayerStatsElement.appendChild(blueDivLoseStatslement);
+    bluePlayerStatsElement.appendChild(blueDivKilledLabelElement);
+    bluePlayerStatsElement.appendChild(blueDivKilledElement);
 }
 
 var updateScoreBoard = function () {
@@ -272,7 +274,7 @@ var checkForCheckmate = function (attackingPlayer, defendingPlayer) {
 
     // check if the attacking player can win the game the next round based on all the possible move
     attackingPlayer.chessPieces.forEach(function(chessPiece) {
-        let temp = chessPiece.possibleMoves();
+        let temp = chessPiece.possibleMoves(playerChessBoard);
 
         // there is no need to check for possible move for killed chess pieces
         // it is not possible to checkmate using general
@@ -375,7 +377,7 @@ var addEventForCells = function () {
     let xAxis = selectedChessPieceElement.parentElement.getAttribute("xCoordinate");
 
     // get chess piece object from back end
-    playerChessBoard[yAxis][xAxis].possibleMoves().forEach(function(move) {
+    playerChessBoard[yAxis][xAxis].possibleMoves(playerChessBoard).forEach(function(move) {
         let cellElement = document.querySelector('[yCoordinate="' + move.possibleYCoordinate + '"][xCoordinate="' + move.possibleXCoordinate + '"]');
 
         if (redPlayer.turn === true) {
@@ -478,25 +480,24 @@ var buttonClickEvent = function (event) {
 
     if (buttonElement.value === "on") {
         enableComputerPlayer = false;
+        bluePlayer.name = "Human Blue";
 
         buttonElement.value = "off";
-
         buttonElement.innerHTML = "Turn On Computer Player";
+
         nameElement.innerHTML = "Human Blue"
         turnElement.innerHTML = "Your </br> Turn";
 
-        bluePlayer.name = "Human Blue";
 
     } else if (buttonElement.value === "off") {
         enableComputerPlayer = true;
+        bluePlayer.name = "Computer Blue";
 
         buttonElement.value = "on";
-
         buttonElement.innerHTML = "Turn Off Computer Player";
+
         nameElement.innerHTML = "Computer Blue"
         turnElement.innerHTML = "Computer Turn";
-
-        bluePlayer.name = "Computer Blue";
     }
 }
 
@@ -583,7 +584,7 @@ var getAllPossibleMoveForPlayerV1 = function (player, chessBoard) {
     for (let a = 0; a < chessBoard.length; a++) {
         for (let b = 0; b < chessBoard[a].length; b++) {
             if (chessBoard[a][b].color === player.color) {
-                chessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
+                chessBoard[a][b].possibleMoves(playerChessBoard).forEach(function(possibleMove) {
                     possibleMove["id"] = chessBoard[a][b].id;
                     possibleMove["name"] = chessBoard[a][b].name;
                     possibleMove["originalYCoordinate"] = chessBoard[a][b].yCoordinate;
@@ -636,9 +637,8 @@ var getAllPossibleMoveForPlayerV2 = function (player, chessBoard) {
         for (let b = 0; b < chessBoard[a].length; b++) {
             // filter by color
             if (chessBoard[a][b].color === player.color) {
-
                 // find all possible move set for each chess piece
-                chessBoard[a][b].possibleMoves().forEach(function(possibleMove) {
+                chessBoard[a][b].possibleMoves(chessBoard).forEach(function(possibleMove) {
                     let temp = {};
                     let color = chessBoard[a][b].color;
                     let snapshot = createSnapshot(chessBoard);
@@ -700,18 +700,16 @@ var evaluateBoardScoreV2 = function (allPossibleMoves) {
 }
 
 // depth level 1
-var minimax = function () {
+var minimaxV2 = function () {
     let temp = [];
 
     let possibleMovesForBlue = getAllPossibleMoveForPlayerV2(bluePlayer, playerChessBoard);
     possibleMovesForBlue = evaluateBoardScoreV2(possibleMovesForBlue);
 
-    possibleMovesForBlue.forEach(function(possiblesMoveForBlue) {
+    possibleMovesForBlue.forEach(function(possiblesMoveForBlue, index) {
         let possibleMoveForBlueThenRed = getAllPossibleMoveForPlayerV2(redPlayer, possiblesMoveForBlue.updatedChessBoard);
         possibleMoveForBlueThenRed = evaluateBoardScoreV2(possibleMoveForBlueThenRed);
 
-        // put in the previous move for analysis
-        possibleMoveForBlueThenRed["previous"] = possiblesMoveForBlue;
         temp.push(possibleMoveForBlueThenRed);
     });
 
