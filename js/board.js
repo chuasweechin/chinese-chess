@@ -525,9 +525,12 @@ var computerPlayerAction = function () {
 }
 
 var calculateBestMoveForComputerPlayer = function () {
-    let allPossibleChessBoardStates = minimax();
     let temp = [];
+    let max = -999;
+    let bestMove = null;
+    let allPossibleChessBoardStates = minimax();
 
+    // get worst/minimum outcome for all red player response for each move by computer player
     for (let a = 0; a < allPossibleChessBoardStates.length; a++) {
         let min = 0;
         let tempItem = {};
@@ -549,19 +552,22 @@ var calculateBestMoveForComputerPlayer = function () {
         temp.push(tempItem);
     }
 
-    let max = -999;
-    let bestMove = null;
-
-    console.log(temp);
-
+    // get the best/maximum outcome for each move
     temp.forEach(function(item) {
         if (item.min > max) {
             bestMove = item.index;
             max = item.min;
         }
     });
+
+    temp = temp.filter(function(item) {
+        return item.min === max;
+    });
+
+    // randomly pick the best move
+    bestMove = temp[Math.floor(Math.random() * temp.length)].index;
+
     console.log(allPossibleChessBoardStates);
-    console.log(allPossibleChessBoardStates[bestMove]);
     console.log(max);
 
     return allPossibleChessBoardStates[bestMove];
@@ -640,10 +646,10 @@ var minimax = function () {
     let possibleMovesForBlue = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
 
     possibleMovesForBlue.forEach(function(possibleMoveForBlue, index) {
-        let possibleMoveForBlueThenRed = getAllPossibleMoveForPlayer(redPlayer, possibleMoveForBlue.updatedChessBoard);
-        possibleMoveForBlueThenRed = evaluateBoardScore(possibleMoveForBlueThenRed);
+        let possibleMovesForBlueThenRed = getAllPossibleMoveForPlayer(redPlayer, possibleMoveForBlue.updatedChessBoard);
+        possibleMovesForBlueThenRed = evaluateBoardScore(possibleMovesForBlueThenRed);
 
-        possibleMovesForBlue[index]["redPlayerResponse"] = possibleMoveForBlueThenRed;
+        possibleMovesForBlue[index]["redPlayerResponse"] = possibleMovesForBlueThenRed;
     });
 
     return possibleMovesForBlue;
