@@ -524,51 +524,29 @@ var computerPlayerAction = function () {
     }, 2000);
 }
 
-var calculateBestMoveForComputerPlayerV1 = function (chessBoard) {
-    let highestScore = 0;
-    let bestPossibleMove = [];
-
-    let possibleMovesForBlue = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
-    possibleMovesForBlue = evaluateBoardScore(possibleMovesForBlue);
-
-    // find the possible move with the highest score
-    for (let i = 0; i < possibleMovesForBlue.length; i++) {
-        // this is to prevent 0 being a bigger number than negative value in the array
-        if (i === 0) {
-            highestScore = possibleMovesForBlue[i].score;
-        }
-
-        if (possibleMovesForBlue[i].score >= highestScore) {
-            highestScore = possibleMovesForBlue[i].score;
-        }
-    }
-
-    // pick one of the possible move with the highest score. It does not matter which so long as it is the highest
-    for (let i = 0; i < possibleMovesForBlue.length; i++) {
-        if (possibleMovesForBlue[i].score === highestScore) {
-            bestPossibleMove = possibleMovesForBlue[i];
-            break;
-        }
-    }
-
-    return bestPossibleMove;
-}
-
-var calculateBestMoveForComputerPlayerV2 = function () {
+var calculateBestMoveForComputerPlayer = function () {
     let allPossibleChessBoardStates = minimax();
     let temp = [];
 
     for (let a = 0; a < allPossibleChessBoardStates.length; a++) {
         let min = 0;
+        let tempItem = {};
 
-        allPossibleChessBoardStates[a].redPlayerResponse.forEach(function(possibleChessBoardState, index) {
-            if (min > Number(possibleChessBoardState.score)) {
-                min = Number(possibleChessBoardState.score);
+        for (let b = 0; b < allPossibleChessBoardStates[a].redPlayerResponse.length; b++) {
+            if (b === 0) {
+                min = allPossibleChessBoardStates[a].redPlayerResponse[b].score;
             }
-        });
+
+            if (allPossibleChessBoardStates[a].redPlayerResponse[b].score < min) {
+                min = allPossibleChessBoardStates[a].redPlayerResponse[b].score;
+            }
+        }
 
         allPossibleChessBoardStates[a]["minScore"] = min;
-        temp.push( a + "," + min);
+        tempItem["index"] = a;
+        tempItem["min"] = min;
+
+        temp.push(tempItem);
     }
 
     let max = -999;
@@ -577,12 +555,14 @@ var calculateBestMoveForComputerPlayerV2 = function () {
     console.log(temp);
 
     temp.forEach(function(item) {
-        if (Number(item.split(",")[1]) > max) {
-            bestMove = item.split(",")[0];
-            max = Number(item.split(",")[1]);
-
+        if (item.min > max) {
+            bestMove = item.index;
+            max = item.min;
         }
     });
+    console.log(allPossibleChessBoardStates);
+    console.log(allPossibleChessBoardStates[bestMove]);
+    console.log(max);
 
     return allPossibleChessBoardStates[bestMove];
 }
@@ -643,7 +623,6 @@ var evaluateBoardScore = function (allPossibleMoves) {
                     if (chessBoardItem.color === "blue") {
                         score += chessBoardItem.weightage;
                     } else if (chessBoardItem.color === "red") {
-                        // minus score for human red player chess pieces
                         score -= chessBoardItem.weightage;
                     }
                 }
