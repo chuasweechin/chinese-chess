@@ -182,6 +182,8 @@ var endPlayerTurn = function () {
         addHoverEffectForChessPieces(bluePlayer.color);
         document.querySelector(".bluePlayer > .turn").style.visibility = "visible";
 
+
+
         updateScoreBoard();
 
     } else if (bluePlayer.turn === true) {
@@ -508,7 +510,7 @@ var buttonClickEvent = function (event) {
 */
 // get all possible move for computer player
 var computerPlayerAction = function () {
-    let bestPossibleMove = calculateBestMoveForComputerPlayerV1(playerChessBoard);
+    let bestPossibleMove = calculateBestMoveForComputerPlayerV2(playerChessBoard);
 
     let yAxis = bestPossibleMove.newYCoordinate;
     let xAxis = bestPossibleMove.newXCoordinate;
@@ -519,15 +521,15 @@ var computerPlayerAction = function () {
 
     setTimeout(function() {
         document.querySelector('[yCoordinate="' + yAxis + '"][xCoordinate="' + xAxis + '"]').click();
-    }, 1000);
+    }, 2000);
 }
 
 var calculateBestMoveForComputerPlayerV1 = function (chessBoard) {
     let highestScore = 0;
     let bestPossibleMove = [];
 
-    let possibleMovesForBlue = getAllPossibleMoveForPlayerV2(bluePlayer, playerChessBoard);
-    possibleMovesForBlue = evaluateBoardScoreV2(possibleMovesForBlue);
+    let possibleMovesForBlue = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
+    possibleMovesForBlue = evaluateBoardScore(possibleMovesForBlue);
 
     // find the possible move with the highest score
     for (let i = 0; i < possibleMovesForBlue.length; i++) {
@@ -552,19 +554,40 @@ var calculateBestMoveForComputerPlayerV1 = function (chessBoard) {
     return bestPossibleMove;
 }
 
-var createSnapshot = function (chessBoard) {
-     let snapshot = [ [],[],[],[],[],[],[],[],[],[] ];
+var calculateBestMoveForComputerPlayerV2 = function () {
+    let allPossibleChessBoardStates = minimax();
+    let temp = [];
 
-    for (let a = 0; a < chessBoard.length; a++) {
-        for (let b = 0; b < chessBoard[a].length; b++) {
-            snapshot[a].push(chessBoard[a][b]);
-        }
+    for (let a = 0; a < allPossibleChessBoardStates.length; a++) {
+        let min = 0;
+
+        allPossibleChessBoardStates[a].redPlayerResponse.forEach(function(possibleChessBoardState, index) {
+            if (min > Number(possibleChessBoardState.score)) {
+                min = Number(possibleChessBoardState.score);
+            }
+        });
+
+        allPossibleChessBoardStates[a]["minScore"] = min;
+        temp.push( a + "," + min);
     }
 
-    return snapshot;
+    let max = -999;
+    let bestMove = null;
+
+    console.log(temp);
+
+    temp.forEach(function(item) {
+        if (Number(item.split(",")[1]) > max) {
+            bestMove = item.split(",")[0];
+            max = Number(item.split(",")[1]);
+
+        }
+    });
+
+    return allPossibleChessBoardStates[bestMove];
 }
 
-var getAllPossibleMoveForPlayerV2 = function (player, chessBoard) {
+var getAllPossibleMoveForPlayer = function (player, chessBoard) {
     let possibleSnapshotAndMoves = [];
 
     // get all the chess pieces of the player
@@ -607,7 +630,7 @@ var getAllPossibleMoveForPlayerV2 = function (player, chessBoard) {
     return possibleSnapshotAndMoves;
 }
 
-var evaluateBoardScoreV2 = function (allPossibleMoves) {
+var evaluateBoardScore = function (allPossibleMoves) {
     allPossibleMoves.forEach(function(possibleMove) {
         let score = 0;
 
@@ -617,16 +640,15 @@ var evaluateBoardScoreV2 = function (allPossibleMoves) {
                 let chessBoardItem = possibleMove.updatedChessBoard[a][b];
 
                 if (chessBoardItem !== "") {
-                    if (chessBoardItem.color === possibleMove.color) {
+                    if (chessBoardItem.color === "blue") {
                         score += chessBoardItem.weightage;
-                    } else {
-                        // minus score for human player chess pieces
+                    } else if (chessBoardItem.color === "red") {
+                        // minus score for human red player chess pieces
                         score -= chessBoardItem.weightage;
                     }
                 }
             }
         }
-
         // tag a score for each possible move
         possibleMove["score"] = score;
     });
@@ -634,22 +656,32 @@ var evaluateBoardScoreV2 = function (allPossibleMoves) {
     return allPossibleMoves;
 }
 
-// depth level 1
-var minimaxV2 = function () {
-    let temp = [];
+// depth - level 1
+var minimax = function () {
+    let possibleMovesForBlue = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
 
-    let possibleMovesForBlue = getAllPossibleMoveForPlayerV2(bluePlayer, playerChessBoard);
-    possibleMovesForBlue = evaluateBoardScoreV2(possibleMovesForBlue);
+    possibleMovesForBlue.forEach(function(possibleMoveForBlue, index) {
+        let possibleMoveForBlueThenRed = getAllPossibleMoveForPlayer(redPlayer, possibleMoveForBlue.updatedChessBoard);
+        possibleMoveForBlueThenRed = evaluateBoardScore(possibleMoveForBlueThenRed);
 
-    possibleMovesForBlue.forEach(function(possiblesMoveForBlue, index) {
-        let possibleMoveForBlueThenRed = getAllPossibleMoveForPlayerV2(redPlayer, possiblesMoveForBlue.updatedChessBoard);
-        possibleMoveForBlueThenRed = evaluateBoardScoreV2(possibleMoveForBlueThenRed);
-
-        temp.push(possibleMoveForBlueThenRed);
+        possibleMovesForBlue[index]["redPlayerResponse"] = possibleMoveForBlueThenRed;
     });
 
-    return temp;
+    return possibleMovesForBlue;
+}
 
+// to enable deep cloning of an  object
+// this is to overcome the issue of shallow cloning object in JS
+var createSnapshot = function (chessBoard) {
+    let temp = [ [],[],[],[],[],[],[],[],[],[] ];
+
+    for (let a = 0; a < chessBoard.length; a++) {
+        for (let b = 0; b < chessBoard[a].length; b++) {
+            temp[a].push(chessBoard[a][b]);
+        }
+    }
+
+    return temp;
 }
 
 /*

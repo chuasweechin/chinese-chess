@@ -11,7 +11,8 @@ var generatePossibleMoveBasedOnMovePattern = function (chessBoard) {
     this.movePattern.forEach(function(pattern, index) {
         let yCoordinatePattern = pattern[0];
         let xCoordinatePattern = pattern[1];
-        let somethingInBetweenCannon = false;
+        let somethingInBetweenCannon = 0;
+
 
         for (let d = 1; d <= chessPieceMoveDistance; d++) {
             let computedYCoordinate = chessPieceYCoordinate + yCoordinatePattern * d;
@@ -108,23 +109,28 @@ var generatePossibleMoveBasedOnMovePattern = function (chessBoard) {
                 }
 
                 if (chessPieceName === "cannon") {
-                    possibleMoves.push({
-                        possibleYCoordinate: computedYCoordinate,
-                        possibleXCoordinate: computedXCoordinate
-                    });
+                    if (somethingInBetweenCannon === 0) {
+                       possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
+                    }
 
-                    if (friendlyFireCheck(chessPieceColor, destinationPosition.color) === true
-                        && somethingInBetweenCannon === true) {
+                    if (destinationPosition !== "" && somethingInBetweenCannon === 0) {
                         possibleMoves.pop();
+                        somethingInBetweenCannon += 1;
 
-                    } else if (destinationPosition !== "" && somethingInBetweenCannon === false) {
-                        possibleMoves.pop();
-                        somethingInBetweenCannon = true;
+                     } else if (destinationPosition !== "" && somethingInBetweenCannon >= 1
+                                && friendlyFireCheck(chessPieceColor, destinationPosition.color) === true) {
+                        somethingInBetweenCannon += 1;
 
-                     } else if (destinationPosition === "" && somethingInBetweenCannon === true) {
-                        possibleMoves.pop();
+                     } else if (destinationPosition !== "" && somethingInBetweenCannon === 1
+                                && friendlyFireCheck(chessPieceColor, destinationPosition.color) === false) {
+                        possibleMoves.push({
+                            possibleYCoordinate: computedYCoordinate,
+                            possibleXCoordinate: computedXCoordinate
+                        });
 
-                     } else if (destinationPosition !== "" && somethingInBetweenCannon === true) {
                         break;
                      }
                 }
@@ -166,11 +172,11 @@ var generatePossibleMoveBasedOnMovePattern = function (chessBoard) {
 }
 
 var chessBoardBoundaryCheck = function (computedYCoordinate, computedXCoordinate) {
-    let yAxisLowerBoundary = 0;
-    let yAxisUpperBoundary = 9;
+    const yAxisLowerBoundary = 0;
+    const yAxisUpperBoundary = 9;
 
-    let xAxisLowerBoundary = 0;
-    let xAxisUpperBoundary = 8;
+    const xAxisLowerBoundary = 0;
+    const xAxisUpperBoundary = 8;
 
     // return true if the coordinates are within the chess board boundary
     if (computedYCoordinate >= yAxisLowerBoundary && computedYCoordinate <= yAxisUpperBoundary
@@ -182,8 +188,8 @@ var chessBoardBoundaryCheck = function (computedYCoordinate, computedXCoordinate
 }
 
 var campBoundaryCheck = function (computedYCoordinate, computedXCoordinate, chessPieceColor) {
-    let xAxisLowerBoundary = 3;
-    let xAxisUpperBoundary= 5;
+    const xAxisLowerBoundary = 3;
+    const xAxisUpperBoundary= 5;
     let yAxisLowerBoundary, yAxisUpperBoundary;
 
     // different color has different camp boundary
@@ -205,8 +211,8 @@ var campBoundaryCheck = function (computedYCoordinate, computedXCoordinate, ches
 }
 
 var landBoundaryCheck = function (computedYCoordinate, computedXCoordinate, chessPieceColor) {
-    let xAxisLowerBoundary = 0;
-    let xAxisUpperBoundary= 8;
+    const xAxisLowerBoundary = 0;
+    const xAxisUpperBoundary= 8;
     let yAxisLowerBoundary, yAxisUpperBoundary;
 
     // different color has different land boundary
@@ -302,7 +308,7 @@ let imageFilePath = "img/";
 let selectedChessPieceElement = "";
 
 let redPlayer = {
-    name: "Human Red",
+    name: "Red",
     color: "red",
     turn: true,
     win: 0,
@@ -362,7 +368,7 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-elephant.svg",
         killed: false,
-        weightage: 30
+        weightage: 20
     },
     {
         id: "r-e-2",
@@ -376,7 +382,7 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-elephant.svg",
         killed: false,
-        weightage: 30
+        weightage: 20
     },
     {
         id: "r-h-1",
@@ -418,7 +424,7 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-chariot.svg",
         killed: false,
-        weightage: 50
+        weightage: 90
     },
     {
         id: "r-ch-2",
@@ -432,7 +438,7 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-chariot.svg",
         killed: false,
-        weightage: 50
+        weightage: 90
     },
     {
         id: "r-ca-1",
@@ -446,7 +452,7 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-cannon.svg",
         killed: false,
-        weightage: 50
+        weightage: 45
     },
     {
         id: "r-ca-2",
@@ -460,7 +466,7 @@ let redPlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "red-cannon.svg",
         killed: false,
-        weightage: 50
+        weightage: 45
     },
     {
         id: "r-s-1",
@@ -595,7 +601,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
         killed: false,
-        weightage: 30
+        weightage: 20
     },
     {
         id: "b-e-2",
@@ -609,7 +615,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-elephant.svg",
         killed: false,
-        weightage: 30
+        weightage: 20
     },
     {
         id: "b-h-1",
@@ -651,7 +657,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-chariot.svg",
         killed: false,
-        weightage: 50
+        weightage: 90
     },
     {
         id: "b-ch-2",
@@ -665,7 +671,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-chariot.svg",
         killed: false,
-        weightage: 50
+        weightage: 90
     },
     {
         id: "b-ca-1",
@@ -679,7 +685,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-cannon.svg",
         killed: false,
-        weightage: 50
+        weightage: 45
     },
     {
         id: "b-ca-2",
@@ -693,7 +699,7 @@ let bluePlayer = {
         possibleMoves: generatePossibleMoveBasedOnMovePattern,
         image: imageFilePath + "blue-cannon.svg",
         killed: false,
-        weightage: 50
+        weightage: 45
     },
     {
         id: "b-s-1",
