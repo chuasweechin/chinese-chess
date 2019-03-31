@@ -510,7 +510,7 @@ var buttonClickEvent = function (event) {
 */
 // get all possible move for computer player
 var computerPlayerAction = function () {
-    let bestPossibleMove = calculateBestMoveForComputerPlayerV2(playerChessBoard);
+    let bestPossibleMove = calculateBestMoveForComputerPlayer(playerChessBoard);
 
     let yAxis = bestPossibleMove.newYCoordinate;
     let xAxis = bestPossibleMove.newXCoordinate;
