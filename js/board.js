@@ -644,6 +644,7 @@ var evaluateBoardScore = function (allPossibleMoves) {
 // depth - level 1
 var minimax = function () {
     let possibleMovesForBlue = getAllPossibleMoveForPlayer(bluePlayer, playerChessBoard);
+    possibleMovesForBlue = evaluateBoardScore(possibleMovesForBlue);
 
     possibleMovesForBlue.forEach(function(possibleMoveForBlue, index) {
         let possibleMovesForBlueThenRed = getAllPossibleMoveForPlayer(redPlayer, possibleMoveForBlue.updatedChessBoard);
@@ -654,6 +655,22 @@ var minimax = function () {
 
     return possibleMovesForBlue;
 }
+
+var minimaxV2 = function (player, chessboard) {
+    let possibleMovesForBlue = getAllPossibleMoveForPlayer(player, chessboard);
+    possibleMovesForBlue = evaluateBoardScore(possibleMovesForBlue);
+
+    possibleMovesForBlue.forEach(function(possibleMoveForBlue, index) {
+        let possibleMovesForBlueThenRed = getAllPossibleMoveForPlayer(redPlayer, possibleMoveForBlue.updatedChessBoard);
+        possibleMovesForBlueThenRed = evaluateBoardScore(possibleMovesForBlueThenRed);
+
+        possibleMovesForBlue[index]["redPlayerResponse"] = possibleMovesForBlueThenRed;
+    });
+
+    return possibleMovesForBlue;
+}
+
+
 
 // to enable deep cloning of an  object
 // this is to overcome the issue of shallow cloning object in JS

@@ -99,10 +99,16 @@ body {
 }
 
 .bluePlayer > .switch {
-	bottom: 150px;
-	width: 150px;
+	top: 75px;
 	margin-left: 26px;
-	position: absolute;
+	position: relative;
+	border: 1px solid grey;
+	border-radius: 3px;
+	cursor: pointer;
+}
+
+.bluePlayer > .switch:focus {
+	outline: none;
 }
 
 .chessBoard > table {
